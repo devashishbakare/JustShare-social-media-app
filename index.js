@@ -3,12 +3,13 @@ const app = express();
 const dotenv = require("dotenv");
 dotenv.config();
 const db = require("./config/mongoose");
+const { default: helmet } = require("helmet");
+const morgan = require("morgan");
 db();
 
-// app.use("/", (req, res) => {
-//   return res.send("hey working now");
-// });
-
+app.use(express.json());
+app.use(helmet());
+app.use(morgan("common"));
 app.use("/", require("./routes/index"));
 
 app.listen(process.env.PORT, (err) => {
