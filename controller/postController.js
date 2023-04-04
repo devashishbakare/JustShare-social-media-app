@@ -1,5 +1,6 @@
 const Post = require("../models/Post");
 const User = require("../models/User");
+const Comment = require("../models/Comment");
 
 const postHome = (req, res) => {
   return res.send("yes home post");
@@ -115,6 +116,27 @@ const like = async (req, res) => {
   }
 };
 
+const getComments = async (req, res) => {
+  const postId = req.params.id;
+
+  try {
+    const post = await Post.findById(postId);
+    if (!post) {
+      return res.status(404).json("post not found");
+    } else {
+      let allComments = await Promise.all(
+        post.comment.map((commentId) => {
+          return Comment.findById(commentId);
+        })
+      );
+      return res.status(200).json(allComments);
+    }
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json("Error while fetching comments");
+  }
+};
+
 module.exports = {
   postHome,
   createPost,
@@ -123,4 +145,5 @@ module.exports = {
   fetchPost,
   getTimeline,
   like,
+  getComments,
 };
