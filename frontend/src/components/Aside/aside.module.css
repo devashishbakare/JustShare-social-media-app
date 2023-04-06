@@ -1,0 +1,31 @@
+.menuList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  margin-top: 30px;
+}
+
+.asideMenuIcon {
+  font-size: 25px;
+}
+
+.asideMenuText {
+  font-size: 20px;
+  margin-left: 20px;
+  font-weight: normal;
+}
+
+.asideMenuImg {
+  height: 35px;
+  width: 35px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.topNewsHeading {
+  font-size: 20px;
+  margin: 0 0 0 40px;
+  font-weight: bold;
+}

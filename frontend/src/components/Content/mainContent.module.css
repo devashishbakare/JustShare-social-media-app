@@ -1,0 +1,21 @@
+.homeContentContainer {
+  display: flex;
+  font-display: column;
+  height: 90vh;
+  width: 100%;
+}
+
+.aside {
+  flex: 3;
+  border: 1px solid black;
+}
+
+.feed {
+  flex: 4.5;
+  border: 1px solid black;
+}
+
+.related {
+  flex: 3.5;
+  border: 1px solid black;
+}
