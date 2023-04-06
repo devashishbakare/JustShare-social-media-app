@@ -1,5 +1,13 @@
+import MainContent from "./components/Content/MainContent";
+import Navbar from "./components/Navbar/Navbar";
+
 function App() {
-  return <>Creat React App</>;
+  return (
+    <>
+      <Navbar />
+      <MainContent />
+    </>
+  );
 }
 
 export default App;
