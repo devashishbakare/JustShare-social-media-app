@@ -36,7 +36,7 @@
   font-size: 12px;
 }
 .postHeadingInfoIcon {
-  margin-right: 20px;
+  margin-right: 13px;
   cursor: pointer;
 }
 
@@ -104,8 +104,14 @@
 
 .postButtomImgWrapper {
   margin-left: 15px;
+  display: flex;
+  align-items: center;
 }
 
 .postCommnetWrapper {
   margin-right: 20px;
+}
+
+.likeCount {
+  margin-left: 10px;
 }

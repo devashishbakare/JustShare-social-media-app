@@ -32,6 +32,7 @@ const Post = () => {
         <div className={style.postButtomImgWrapper}>
           <img src={like} alt="Like_Image" className={style.postLikeImg} />
           <img src={love} alt="Love_Image" className={style.postLoveImg} />
+          <span className={style.likeCount}>32 people like it</span>
         </div>
         <div className={style.postCommnetWrapper}>
           {/* Todo : we have to use link in router-dom */}

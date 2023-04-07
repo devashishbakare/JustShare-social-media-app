@@ -8,14 +8,16 @@
 .aside {
   flex: 3;
   border: 1px solid black;
+  position: sticky;
 }
 
 .feed {
-  flex: 4.5;
+  flex: 5;
   border: 1px solid black;
 }
 
 .related {
-  flex: 3.5;
+  flex: 3;
   border: 1px solid black;
+  position: sticky;
 }
