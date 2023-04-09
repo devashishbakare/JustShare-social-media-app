@@ -4,6 +4,8 @@ const homeController = require("../controller/homeController");
 router.get("/", homeController.home);
 router.post("/register", homeController.registerUser);
 router.post("/login", homeController.login);
+router.get("/getCookies", homeController.fetchCookies);
+router.get("/logout", homeController.logout);
 router.use("/user", require("./user"));
 router.use("/post", require("./post"));
 module.exports = router;

@@ -1,5 +1,6 @@
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 const home = (req, res) => {
   return res.send("okay chekc this");
 };
@@ -35,6 +36,7 @@ const registerUser = async (req, res) => {
   }
 };
 
+//Login user
 const login = async (req, res) => {
   const { email, password } = req.body;
 
@@ -54,14 +56,49 @@ const login = async (req, res) => {
       return res.status(500).json("email or password are not correct");
     }
 
-    return res.status(200).json("login successfully");
+    const token = jwt.sign({ userId: user._id }, process.env.PRIVATE_KEY, {
+      expiresIn: "10d",
+    });
+
+    if (!token) return res.status(500).json("unable to generate a token");
+
+    // Adding token to session cookie
+    req.session.token = token;
+
+    console.log("cookie data", req.session.token);
+    const response = {
+      user,
+      token,
+      message: "login successfull",
+      cookie: req.session.token,
+    };
+
+    return res.status(200).json(response);
   } catch (err) {
     console.error(err);
     return res.status(500).json("login failed");
   }
 };
+
+const fetchCookies = (req, res) => {
+  return res.status(200).json(req.session.token);
+};
+//todo : just deleting cookie from a session you have to consider other things here while loggin out
+const logout = (req, res) => {
+  req.session.destroy((err) => {
+    if (err) {
+      console.log("Error while deleteing a session", err);
+    } else {
+      console.log("session deleted");
+    }
+  });
+  return res.status(200).json("sessoin destroy");
+};
+
 module.exports = {
   home,
   registerUser,
   login,
+  fetchCookies,
+  logout,
 };
