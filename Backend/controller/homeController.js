@@ -95,10 +95,19 @@ const logout = (req, res) => {
   return res.status(200).json("sessoin destroy");
 };
 
+const checkAuthentication = (req, res) => {
+  let userId = req.params.id;
+  if (userId === req.userId)
+    return res.status(200).json("authentication successfull");
+
+  return res.status(500).json("authentication failed");
+};
+
 module.exports = {
   home,
   registerUser,
   login,
   fetchCookies,
   logout,
+  checkAuthentication,
 };
