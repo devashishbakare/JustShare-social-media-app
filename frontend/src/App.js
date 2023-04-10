@@ -1,11 +1,17 @@
-import MainContent from "./components/Content/MainContent";
-import Navbar from "./components/Navbar/Navbar";
-
+import HomePage from "./components/HomePage";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import LoginPage from "../src/components/Login/LoginPage";
+import ResisterPage from "./components/Login/ResisterPage";
 function App() {
   return (
     <>
-      <Navbar />
-      <MainContent />
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<LoginPage />} />
+          <Route path="/register" element={<ResisterPage />} />
+          <Route path="/home" element={<HomePage />} />
+        </Routes>
+      </BrowserRouter>
     </>
   );
 }
