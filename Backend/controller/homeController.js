@@ -7,16 +7,16 @@ const home = (req, res) => {
 
 //Regiser User
 const registerUser = async (req, res) => {
-  const { userName, email, password, confirmPassword } = req.body;
+  console.log(req.body);
 
+  const { userName, email, password, confirmPassword, profilePicture } =
+    req.body;
   if (!userName || !email || !password || !confirmPassword) {
     return res.status(500).json("check details");
   }
-
   if (password !== confirmPassword) {
     return res.status(500).json("check password and confirm password again");
   }
-
   try {
     const saltRounds = 10;
     const salt = bcrypt.genSaltSync(saltRounds);
@@ -25,10 +25,9 @@ const registerUser = async (req, res) => {
       userName,
       email,
       password: hash,
+      profilePicture,
     });
-
     await user.save();
-
     return res.status(200).json(user);
   } catch (err) {
     console.error(err);

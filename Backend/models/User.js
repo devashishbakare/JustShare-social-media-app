@@ -23,6 +23,9 @@ const userSchema = new mongoose.Schema(
       default:
         "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg",
     },
+    coverPicture: {
+      type: String,
+    },
     followers: {
       type: Array,
       default: [],
@@ -50,6 +53,10 @@ const userSchema = new mongoose.Schema(
     relationship: {
       type: Number,
       enum: [1, 2, 3],
+    },
+    bookmark: {
+      type: Array,
+      default: [],
     },
   },
   { timestamps: true }
