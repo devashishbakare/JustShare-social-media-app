@@ -14,9 +14,12 @@ import {
   TbShirtSport,
 } from "react-icons/tb";
 import { VscGlobe, VscRss } from "react-icons/vsc";
-import profilePicture from "../../assets/user/img2.jpg";
+// import profilePicture from "../../assets/user/img2.jpg";
 
 const Aside = () => {
+  const userDetails = localStorage.getItem("user");
+  const user = JSON.parse(userDetails);
+  const { profilePicture } = user;
   return (
     <div className={style.asideContainer}>
       <div className={style.asideMenuWrapper}>

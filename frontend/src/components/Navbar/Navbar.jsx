@@ -1,8 +1,10 @@
 import React from "react";
 import style from "./navbar.module.css";
 import { FaSearch, FaRegBell, FaRocketchat } from "react-icons/fa";
-import profilePicture from "../../assets/user/img2.jpg";
 const Navbar = () => {
+  const userDetails = localStorage.getItem("user");
+  const user = JSON.parse(userDetails);
+  const userProfilePhoto = user.profilePicture;
   return (
     <>
       <div className={style.navbarContainer}>
@@ -35,7 +37,7 @@ const Navbar = () => {
             <span className={style.iconBadge}>1</span>
           </div>
           <img
-            src={profilePicture}
+            src={userProfilePhoto}
             alt="profile img"
             className={style.navBarImg}
           />

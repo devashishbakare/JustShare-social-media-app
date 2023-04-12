@@ -33,7 +33,7 @@ const Register = () => {
     } catch (err) {
       console.log(err);
     }
-    console.log("Form Data", formData);
+    // console.log("Form Data", formData);
   };
 
   //uploading images on cloud and save it in db

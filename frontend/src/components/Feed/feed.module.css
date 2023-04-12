@@ -5,6 +5,7 @@
   -webkit-box-shadow: 0px 0px 16px -8px rgba(0, 0, 0, 0.68);
   box-shadow: 0px 0px 16px -8px rgba(0, 0, 0, 0.68);
   margin: 5px 0;
+  /* border: 1px solid black; */
 }
 
 .profileAndDesription {
@@ -29,11 +30,11 @@
 
 .listItmes {
   display: flex;
-  text-align: left;
+  /* border: 1px solid black; */
 }
 li {
-  margin-left: -20px;
-  margin-right: 50px;
+  margin-left: -10px;
+  margin-right: 20px;
   list-style: none;
   display: flex;
   align-items: center;
@@ -42,7 +43,7 @@ li {
   font-size: 28px;
 }
 .uploadPostText {
-  font-size: 18px;
+  font-size: 15px;
   margin-left: 5px;
 }
 hr {

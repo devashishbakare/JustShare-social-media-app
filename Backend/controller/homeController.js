@@ -7,7 +7,7 @@ const home = (req, res) => {
 
 //Regiser User
 const registerUser = async (req, res) => {
-  console.log(req.body);
+  // console.log(req.body);
 
   const { userName, email, password, confirmPassword, profilePicture } =
     req.body;
@@ -82,7 +82,7 @@ const login = async (req, res) => {
 const fetchCookies = (req, res) => {
   return res.status(200).json(req.session.token);
 };
-//todo : just deleting cookie from a session you have to consider other things here while loggin out
+//todo : here we are just deleting cookie from a session you have to consider other things here while loggin out
 const logout = (req, res) => {
   req.session.destroy((err) => {
     if (err) {

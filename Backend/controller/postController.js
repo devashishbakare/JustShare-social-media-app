@@ -9,8 +9,16 @@ const postHome = (req, res) => {
 // creating a post
 const createPost = async (req, res) => {
   try {
+    const { userId, desc, image } = req.body;
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json("user not found");
+    }
     let newPost = new Post(req.body);
     await newPost.save();
+
     return res.status(200).json(newPost);
   } catch (err) {
     console.error(err);
@@ -71,7 +79,7 @@ const fetchPost = async (req, res) => {
 //fetch all post in timeline
 
 const getTimeline = async (req, res) => {
-  let userId = req.body.id;
+  const userId = req.query.id;
   try {
     let currentUser = await User.findById(userId);
     if (!currentUser) return res.status(404).json("User Not Found");
