@@ -7,6 +7,7 @@ import { baseUrl } from "../constants";
 
 const Feed = () => {
   const [posts, setPosts] = useState([]);
+
   // Fetchin data from local storage and updating info on runTime
   const userDetails = localStorage.getItem("user");
   const user = JSON.parse(userDetails);
@@ -77,7 +78,7 @@ const Feed = () => {
     );
 
     if (response) {
-      setPosts([...posts, response.data]);
+      setPosts([response.data, ...posts]);
     }
   };
 
@@ -103,49 +104,50 @@ const Feed = () => {
 
   return (
     <>
-      <div className={style.uploadPostContainer}>
-        <form onSubmit={handleSubmit}>
-          <div className={style.profileAndDesription}>
-            <img
-              src={profilePicture}
-              alt="profile img"
-              className={style.uploadPostProfilePhoto}
-            />
-            <input
-              type="text"
-              className={style.uploadPostDescription}
-              placeholder={`whats in your mind ${userName}...`}
-              name="desc"
-              onChange={handleChange}
-            />
-          </div>
-          <hr />
-          <div className="uploadSharingDetails">
-            <ul className={style.listItmes}>
-              <li>
-                <FcAddImage className={style.iconStyle} />
-                <input
-                  type="file"
-                  className={style.uploadPostText}
-                  onChange={(e) => handleUploadPicture(e.target.files[0])}
-                />
-              </li>
-              <li>
-                <FcLike className={style.iconStyle} />
-                <span className={style.uploadPostText}> Feelings</span>
-              </li>
-              <li>
-                <button className={style.uploadShareButton}> Share</button>
-              </li>
-            </ul>
-          </div>
-        </form>
-      </div>
-      <div className={style.uploadedPost}>
-        {/* <Post /> */}
-        {posts.map((post) => (
-          <Post key={post._id} props={post} />
-        ))}
+      <div className={style.feedContainer}>
+        <div className={style.uploadPostContainer}>
+          <form onSubmit={handleSubmit}>
+            <div className={style.profileAndDesription}>
+              <img
+                src={profilePicture}
+                alt="profile img"
+                className={style.uploadPostProfilePhoto}
+              />
+              <input
+                type="text"
+                className={style.uploadPostDescription}
+                placeholder={`whats in your mind ${userName}...`}
+                name="desc"
+                onChange={handleChange}
+              />
+            </div>
+            <hr />
+            <div className="uploadSharingDetails">
+              <ul className={style.listItmes}>
+                <li>
+                  <FcAddImage className={style.iconStyle} />
+                  <input
+                    type="file"
+                    className={style.uploadPostText}
+                    onChange={(e) => handleUploadPicture(e.target.files[0])}
+                  />
+                </li>
+                <li>
+                  <FcLike className={style.iconStyle} />
+                  <span className={style.uploadPostText}> Feelings</span>
+                </li>
+                <li>
+                  <button className={style.uploadShareButton}> Share</button>
+                </li>
+              </ul>
+            </div>
+          </form>
+        </div>
+        <div className={style.uploadedPost}>
+          {posts.map((post) => (
+            <Post key={post._id} props={post} />
+          ))}
+        </div>
       </div>
     </>
   );

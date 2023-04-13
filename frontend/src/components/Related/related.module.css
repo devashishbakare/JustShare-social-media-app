@@ -4,6 +4,10 @@
   margin-top: 10px;
 }
 
+.relatedFriendWrapper {
+  /* border: 1px solid black; */
+  margin-top: 20px;
+}
 .imgWrapper {
   display: flex;
   align-items: center;
@@ -11,7 +15,7 @@
 }
 .friendListWrapper {
   overflow-y: auto;
-  max-height: 420px;
+  max-height: 465px;
 }
 .relatedAdImg {
   height: auto;
@@ -21,6 +25,7 @@
 }
 .relatedAdLink {
   margin-left: 20px;
+  /* border: 1px solid black; */
 }
 
 .friendheadingWrapper {
@@ -45,4 +50,8 @@
   border-radius: 50%;
   object-fit: cover;
   margin: 10px 15px 5px 30px;
+}
+
+.realtedHrDivider {
+  margin: 10px 0px 10px 10px;
 }

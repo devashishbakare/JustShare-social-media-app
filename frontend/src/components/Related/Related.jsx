@@ -4,6 +4,7 @@ import f1 from "../../assets/user/img4.jpeg";
 import f2 from "../../assets/user/img5.jpeg";
 import f3 from "../../assets/user/img6.jpeg";
 import style from "./related.module.css";
+import { Link } from "react-router-dom";
 const Related = () => {
   return (
     <>
@@ -11,12 +12,11 @@ const Related = () => {
         <div className={style.imgWrapper}>
           <img src={adImg} alt="related_ads" className={style.relatedAdImg} />
         </div>
-
-        <a href="" className={style.relatedAdLink}>
-          Visit Product
-        </a>
+        <div className={style.relatedAdLink}>
+          <Link to=""> Visit Product</Link>
+        </div>
       </div>
-      <hr />
+      <hr className={style.realtedHrDivider} />
       <div className={style.relatedFriendWrapper}>
         <div className={style.friendheadingWrapper}>
           <span className={style.relatedFriendText}>Friends</span>

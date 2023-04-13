@@ -6,8 +6,8 @@ import love from "../../assets/love.jpeg";
 import axios from "axios";
 import { baseUrl } from "../constants";
 
-const Post = ({ props }) => {
-  console.log(props);
+const Post = React.memo(({ props }) => {
+  // console.log(props);
   const [userName, setUserName] = useState("");
   const [profilePicture, setProfilePicture] = useState("");
 
@@ -70,6 +70,6 @@ const Post = ({ props }) => {
       </div>
     </div>
   );
-};
+});
 
 export default Post;
