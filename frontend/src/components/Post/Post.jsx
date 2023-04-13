@@ -10,7 +10,13 @@ const Post = React.memo(({ props }) => {
   // console.log(props);
   const [userName, setUserName] = useState("");
   const [profilePicture, setProfilePicture] = useState("");
+  const [likeCount, setLikeCount] = useState(props.like.length);
 
+  const userDetails = localStorage.getItem("user");
+  const user = JSON.parse(userDetails);
+  const userId = user._id;
+
+  //Featching details of user who made this post
   useEffect(() => {
     const config = {
       headers: {
@@ -30,6 +36,33 @@ const Post = React.memo(({ props }) => {
     };
     fetchUserDetails();
   }, []);
+
+  const handleLikePost = async () => {
+    try {
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      };
+      const info = {
+        userId: userId,
+        postId: props._id,
+      };
+      const response = await axios.put(`${baseUrl}/post/like`, info, config);
+      console.log(response.data);
+      if (response.status === 500) {
+        //todo : Throw error or push notification
+      } else {
+        if (response.data.like === true) {
+          setLikeCount(likeCount + 1);
+        } else {
+          setLikeCount(likeCount - 1);
+        }
+      }
+    } catch (err) {
+      console.error(err, "Error while liking post");
+    }
+  };
 
   return (
     <div className={style.postContainer}>
@@ -57,9 +90,23 @@ const Post = React.memo(({ props }) => {
       </div>
       <div className={style.postBottomWrapper}>
         <div className={style.postButtomImgWrapper}>
-          <img src={like} alt="Like_Image" className={style.postLikeImg} />
-          <img src={love} alt="Love_Image" className={style.postLoveImg} />
-          <span className={style.likeCount}>32 people like it</span>
+          <img
+            src={like}
+            alt="Like_Image"
+            className={style.postLikeImg}
+            onClick={handleLikePost}
+          />
+          <img
+            src={love}
+            alt="Love_Image"
+            className={style.postLoveImg}
+            onClick={handleLikePost}
+          />
+          {likeCount === 0 ? (
+            <span></span>
+          ) : (
+            <span className={style.likeCount}>{likeCount} people like it</span>
+          )}
         </div>
         <div className={style.postCommnetWrapper}>
           {/* Todo : we have to use link in router-dom */}

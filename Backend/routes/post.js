@@ -7,7 +7,7 @@ router.put("/update/:id", postController.updatePost);
 router.delete("/delete/:id", postController.deletePost);
 router.get("/get/:id", postController.fetchPost);
 router.get("/timeline", postController.getTimeline);
-router.put("/like/:id", postController.like);
+router.put("/like", postController.like);
 router.get("/comments/:id", postController.getComments);
 router.use("/comment", require("./comment"));
 

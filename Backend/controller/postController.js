@@ -102,21 +102,26 @@ const getTimeline = async (req, res) => {
 // like and dislike a post
 
 const like = async (req, res) => {
-  let postId = req.params.id;
-  let userId = req.body.id;
+  const { userId, postId } = req.body;
+
+  console.log("pId " + postId + " uId " + userId);
 
   try {
+    const response = {
+      like: false,
+      message: "like and dislike is done",
+    };
     let post = await Post.findById(postId);
 
     if (!post) return res.status(404).json("post not found");
 
     if (post.like.includes(userId)) {
       await post.updateOne({ $pull: { like: userId } });
-      return res.status(200).json("disliked!!");
+      return res.status(200).json(response);
     } else {
       let status = await post.updateOne({ $push: { like: userId } });
-
-      return res.status(200).json("liked!!");
+      response.like = true;
+      return res.status(200).json(response);
     }
   } catch (err) {
     console.error(err);
