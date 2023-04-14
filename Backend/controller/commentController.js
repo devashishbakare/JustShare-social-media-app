@@ -13,6 +13,8 @@ const createComment = async (req, res) => {
       postId: postId,
       userId: userId,
       text: req.body.text,
+      commenterName: user.userName,
+      commenterProfilePicture: user.profilePicture,
     });
 
     await comment.save();
@@ -139,10 +141,46 @@ const getCommentReply = async (req, res) => {
   }
 };
 
+const getPostComment = async (req, res) => {
+  try {
+    const userId = req.query.userId;
+    const postId = req.query.postId;
+    // const { userId, postId } = req.query;
+    console.log(`user id ${userId} and postid ${postId}`);
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({
+        message: "user not found",
+      });
+    }
+
+    const post = await Post.findById(postId);
+    if (!post) {
+      return res.status(404).json({
+        message: "Post not found",
+      });
+    }
+
+    const postComments = await Promise.all(
+      post.comment.map((eachComment) => {
+        return Comment.findById(eachComment);
+      })
+    );
+
+    return res.status(200).json({
+      message: "Fetch all comments of Post",
+      data: postComments,
+    });
+  } catch (err) {
+    console.error("Unable to fetch commnets");
+  }
+};
 module.exports = {
   createComment,
   updateComment,
   deleteComment,
   commentReply,
   getCommentReply,
+  getPostComment,
 };

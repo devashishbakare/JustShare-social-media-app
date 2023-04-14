@@ -10,6 +10,14 @@ const commentSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    commenterName: {
+      type: String,
+      require: true,
+    },
+    commenterProfilePicture: {
+      type: String,
+      required: true,
+    },
     text: {
       type: String,
       max: 100,

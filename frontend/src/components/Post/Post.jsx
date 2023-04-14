@@ -1,17 +1,23 @@
 import React, { useEffect, useState } from "react";
 import style from "./post.module.css";
 import { FaEllipsisV } from "react-icons/fa";
+import { AiFillCloseCircle } from "react-icons/ai";
 import like from "../../assets/like.jpeg";
 import love from "../../assets/love.jpeg";
 import axios from "axios";
 import { baseUrl } from "../constants";
+import PostComments from "./PostComments";
 
 const Post = React.memo(({ props }) => {
   // console.log(props);
   const [userName, setUserName] = useState("");
   const [profilePicture, setProfilePicture] = useState("");
   const [likeCount, setLikeCount] = useState(props.like.length);
+  const [toggleComment, setToggleComment] = useState(false);
+  const [currPostComments, setCurrPostComments] = useState([]);
+  const [comment, setComment] = useState("");
 
+  //Getting user Details from localStorage
   const userDetails = localStorage.getItem("user");
   const user = JSON.parse(userDetails);
   const userId = user._id;
@@ -64,6 +70,47 @@ const Post = React.memo(({ props }) => {
     }
   };
 
+  const handleCommentChange = (event) => {
+    setComment(event.target.value);
+  };
+
+  useEffect(() => {
+    const fetchCommentDetails = async () => {
+      try {
+        const config = {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          params: {
+            userId: userId,
+            postId: props._id,
+          },
+        };
+
+        const response = await axios.get(
+          `${baseUrl}/post/comment/postComments`,
+          config
+        );
+        if (response.status === 200) {
+          console.log("response message", response.data.data);
+          setCurrPostComments(response.data.data);
+          console.log("pc", currPostComments);
+        } else {
+          //todo : Handle error here
+          console.log("got error while accessing a comment");
+        }
+      } catch (err) {
+        console.error(err, "Errow while fetching comments");
+      }
+    };
+
+    fetchCommentDetails();
+  }, [props._id, toggleComment]);
+
+  const handleCloseCommentsClick = () => {
+    setToggleComment(!toggleComment);
+  };
+
   return (
     <div className={style.postContainer}>
       <div className={style.postTopDetails}>
@@ -110,11 +157,41 @@ const Post = React.memo(({ props }) => {
         </div>
         <div className={style.postCommnetWrapper}>
           {/* Todo : we have to use link in router-dom */}
-          <a href="" className="commentLink">
+          <span
+            className={style.commentLink}
+            onClick={() => setToggleComment(!toggleComment)}
+          >
             Comments
-          </a>
+          </span>
         </div>
       </div>
+      {toggleComment && (
+        <div className={style.commentContainer}>
+          <hr className={style.postCommentDivider} />
+          <div className={style.commentForm}>
+            <form className={style.commentFormFrom}>
+              <span className={style.inputWrapper}>
+                <input
+                  type="text"
+                  name="comment"
+                  onChange={handleCommentChange}
+                  className={style.commentInputSection}
+                  placeholder="Add your comment here.."
+                />
+              </span>
+
+              <button className={style.commentButton}> Post Comment</button>
+              <AiFillCloseCircle
+                onClick={handleCloseCommentsClick}
+                className={style.closeCommentButton}
+              />
+            </form>
+          </div>
+          {currPostComments.map((singleComment) => (
+            <PostComments key={singleComment._id} postComment={singleComment} />
+          ))}
+        </div>
+      )}
     </div>
   );
 });
