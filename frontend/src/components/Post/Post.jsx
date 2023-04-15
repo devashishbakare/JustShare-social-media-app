@@ -7,21 +7,24 @@ import love from "../../assets/love.jpeg";
 import axios from "axios";
 import { baseUrl } from "../constants";
 import PostComments from "./PostComments";
+import Spinner from "../Spinners";
 
 const Post = React.memo(({ props }) => {
   // console.log(props);
+
   const [userName, setUserName] = useState("");
   const [profilePicture, setProfilePicture] = useState("");
   const [likeCount, setLikeCount] = useState(props.like.length);
   const [toggleComment, setToggleComment] = useState(false);
-  const [currPostComments, setCurrPostComments] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [comments, setComments] = useState([]);
   const [comment, setComment] = useState("");
 
   //Getting user Details from localStorage
   const userDetails = localStorage.getItem("user");
   const user = JSON.parse(userDetails);
   const userId = user._id;
-
+  const postId = props._id;
   //Featching details of user who made this post
   useEffect(() => {
     const config = {
@@ -74,41 +77,68 @@ const Post = React.memo(({ props }) => {
     setComment(event.target.value);
   };
 
-  useEffect(() => {
-    const fetchCommentDetails = async () => {
-      try {
-        const config = {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          params: {
-            userId: userId,
-            postId: props._id,
-          },
-        };
+  const fetchPostComments = async () => {
+    setToggleComment(!toggleComment);
 
-        const response = await axios.get(
-          `${baseUrl}/post/comment/postComments`,
-          config
-        );
-        if (response.status === 200) {
-          console.log("response message", response.data.data);
-          setCurrPostComments(response.data.data);
-          console.log("pc", currPostComments);
-        } else {
-          //todo : Handle error here
-          console.log("got error while accessing a comment");
-        }
-      } catch (err) {
-        console.error(err, "Errow while fetching comments");
+    setIsLoading(true);
+    //fetching comment from backend
+    try {
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        params: {
+          userId: userId,
+          postId: props._id,
+        },
+      };
+
+      const response = await axios.get(
+        `${baseUrl}/post/comment/postComments`,
+        config
+      );
+
+      if (response.status === 200) {
+        console.log(response.data.data);
+        setComments(response.data.data);
       }
-    };
-
-    fetchCommentDetails();
-  }, [props._id, toggleComment]);
+    } catch (err) {
+      console.error(err, "Errow while fetching comments");
+    }
+    setIsLoading(false);
+  };
 
   const handleCloseCommentsClick = () => {
+    console.log(props._id + " pid");
     setToggleComment(!toggleComment);
+  };
+
+  const postCommentHandler = async (event) => {
+    event.preventDefault();
+    console.log(comment);
+    try {
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      };
+      const postRequestBody = {
+        userId: userId,
+        postId: postId,
+        text: comment,
+      };
+      const response = await axios.post(
+        `${baseUrl}/post/comment/create`,
+        postRequestBody,
+        config
+      );
+      if (response.status === 200) {
+        console.log(response.data.data);
+        setComments([response.data.data, ...comments]);
+      }
+    } catch (err) {
+      console.error("Create Comment Failed");
+    }
   };
 
   return (
@@ -157,10 +187,7 @@ const Post = React.memo(({ props }) => {
         </div>
         <div className={style.postCommnetWrapper}>
           {/* Todo : we have to use link in router-dom */}
-          <span
-            className={style.commentLink}
-            onClick={() => setToggleComment(!toggleComment)}
-          >
+          <span className={style.commentLink} onClick={fetchPostComments}>
             Comments
           </span>
         </div>
@@ -169,7 +196,10 @@ const Post = React.memo(({ props }) => {
         <div className={style.commentContainer}>
           <hr className={style.postCommentDivider} />
           <div className={style.commentForm}>
-            <form className={style.commentFormFrom}>
+            <form
+              className={style.commentFormFrom}
+              onSubmit={postCommentHandler}
+            >
               <span className={style.inputWrapper}>
                 <input
                   type="text"
@@ -180,16 +210,21 @@ const Post = React.memo(({ props }) => {
                 />
               </span>
 
-              <button className={style.commentButton}> Post Comment</button>
+              <button className={style.commentButton}>Post Comment</button>
               <AiFillCloseCircle
                 onClick={handleCloseCommentsClick}
                 className={style.closeCommentButton}
               />
             </form>
           </div>
-          {currPostComments.map((singleComment) => (
-            <PostComments key={singleComment._id} postComment={singleComment} />
-          ))}
+
+          {isLoading ? (
+            <Spinner />
+          ) : (
+            comments.map((singleComment) => (
+              <PostComments key={singleComment._id} comment={singleComment} />
+            ))
+          )}
         </div>
       )}
     </div>

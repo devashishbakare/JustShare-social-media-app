@@ -5,6 +5,7 @@ const createComment = async (req, res) => {
   let postId = req.body.postId;
   let userId = req.body.userId;
 
+  console.log(`uid -> ${userId} pid -> ${postId}`);
   try {
     let user = await User.findById(userId);
     if (!user) return res.status(404).json("User Not Found");
@@ -30,8 +31,8 @@ const createComment = async (req, res) => {
       return res.status(404).json("Enable to add comment on this");
 
     const response = {
-      comment,
-      updatedPost,
+      messege: "comment has been added",
+      data: comment,
     };
     return res.status(200).json(response);
   } catch (err) {

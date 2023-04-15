@@ -3,9 +3,9 @@ import style from "./post.module.css";
 import { FaEllipsisH } from "react-icons/fa";
 import like from "../../assets/like.jpeg";
 // import profilePicture from "../../assets/user/img4.jpeg";
-const PostComments = React.memo(({ props }) => {
-  console.log(props.postComment.text);
-  const { profilePicture, commenterName, text } = props.postComment;
+const PostComments = React.memo(({ comment }) => {
+  console.log(comment, "comment");
+  const { commenterProfilePicture, commenterName, text } = comment;
 
   const handleLikeComment = () => {};
 
@@ -17,7 +17,7 @@ const PostComments = React.memo(({ props }) => {
             <div className={style.commentNameImgWrapper}>
               <img
                 className={style.comenterProfilePhoto}
-                src={profilePicture}
+                src={commenterProfilePicture}
                 alt="user_image"
               />
               <span className={style.commenterName}>{commenterName}</span>
