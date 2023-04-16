@@ -8,6 +8,7 @@ import axios from "axios";
 import { baseUrl } from "../constants";
 import PostComments from "./PostComments";
 import Spinner from "../Spinners";
+import PostMenuOptions from "./PostMenuOptions.jsx";
 
 const Post = React.memo(({ props }) => {
   // console.log(props);
@@ -19,6 +20,7 @@ const Post = React.memo(({ props }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [comments, setComments] = useState([]);
   const [comment, setComment] = useState("");
+  const [showOption, setShowOption] = useState(false);
 
   //Getting user Details from localStorage
   const userDetails = localStorage.getItem("user");
@@ -141,6 +143,19 @@ const Post = React.memo(({ props }) => {
     }
   };
 
+  const handleShowOption = () => {
+    setShowOption(!showOption);
+  };
+
+  const toggleOptions = () => {
+    setShowOption(!showOption);
+  };
+
+  const menuOptionProps = {
+    postId,
+    toggleOptions,
+  };
+
   return (
     <div className={style.postContainer}>
       <div className={style.postTopDetails}>
@@ -154,7 +169,11 @@ const Post = React.memo(({ props }) => {
           {/* <span className={style.postTiming}>5 min ago</span> */}
         </div>
         <div className="postHeadingIcon">
-          <FaEllipsisV className={style.postHeadingInfoIcon} />
+          <FaEllipsisV
+            className={style.postHeadingInfoIcon}
+            onClick={handleShowOption}
+          />
+          {showOption && <PostMenuOptions postDetails={menuOptionProps} />}
         </div>
       </div>
       <div className={style.postDescImg}>
@@ -217,14 +236,15 @@ const Post = React.memo(({ props }) => {
               />
             </form>
           </div>
-
-          {isLoading ? (
-            <Spinner />
-          ) : (
-            comments.map((singleComment) => (
-              <PostComments key={singleComment._id} comment={singleComment} />
-            ))
-          )}
+          <div className={style.commentListWrapper}>
+            {isLoading ? (
+              <Spinner />
+            ) : (
+              comments.map((singleComment) => (
+                <PostComments key={singleComment._id} comment={singleComment} />
+              ))
+            )}
+          </div>
         </div>
       )}
     </div>
