@@ -4,7 +4,7 @@ import { FcAddImage, FcLike } from "react-icons/fc";
 import Post from "../Post/Post";
 import axios from "axios";
 import { baseUrl } from "../constants";
-
+import FeedContext from "../../Contex/FeedContext";
 const Feed = () => {
   const [posts, setPosts] = useState([]);
 
@@ -144,9 +144,11 @@ const Feed = () => {
           </form>
         </div>
         <div className={style.uploadedPost}>
-          {posts.map((post) => (
-            <Post key={post._id} props={post} />
-          ))}
+          <FeedContext.Provider value={{ posts, setPosts }}>
+            {posts.map((post) => (
+              <Post key={post._id} props={post} />
+            ))}
+          </FeedContext.Provider>
         </div>
       </div>
     </>

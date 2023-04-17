@@ -173,7 +173,11 @@ const Post = React.memo(({ props }) => {
             className={style.postHeadingInfoIcon}
             onClick={handleShowOption}
           />
-          {showOption && <PostMenuOptions postDetails={menuOptionProps} />}
+          {showOption && (
+            <div className={style.menuContainer}>
+              <PostMenuOptions postDetails={menuOptionProps} />
+            </div>
+          )}
         </div>
       </div>
       <div className={style.postDescImg}>
