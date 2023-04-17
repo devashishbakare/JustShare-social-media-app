@@ -34,11 +34,41 @@ const PostMenuOptions = ({ postDetails }) => {
     }
   };
 
+  const handlePostBookmark = async () => {
+    try {
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      };
+      const requestPostInfo = {
+        userId,
+        postId,
+      };
+      const response = await axios.post(
+        `${baseUrl}/user/bookmark`,
+        requestPostInfo,
+        config
+      );
+
+      if (response.status === 200) {
+        console.log("bookmariking a post", response.data.message);
+        toggleOptions();
+      } else {
+        //todo : you have to push a notification and handle if any error:
+      }
+    } catch (error) {
+      console.error(error, "error while bookmarking a post");
+    }
+  };
+
   return (
     <>
       <div className={style.menuOptionContainer}>
         <div className={style.menuWrapper}>
-          <div className={style.options}>Bookmark</div>
+          <div className={style.options} onClick={handlePostBookmark}>
+            Bookmark
+          </div>
           <div className={style.options}>Edit</div>
           <div className={style.options} onClick={handleDeletePost}>
             Delete

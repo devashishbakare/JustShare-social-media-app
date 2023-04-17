@@ -1,5 +1,7 @@
+const { estimatedDocumentCount } = require("../models/Post");
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
+const Post = require("../models/Post");
 
 // updating user info in db
 const updateUser = async (req, res) => {
@@ -106,10 +108,65 @@ const unfollowUser = async (req, res) => {
   }
 };
 
+const bookmarkPost = async (req, res) => {
+  let userId = req.body.userId;
+  let postId = req.body.postId;
+  try {
+    let user = await User.findById(userId);
+    let post = await Post.findById(postId);
+    if (!user || !post) {
+      return res.status(404).json("User not found");
+    }
+
+    if (user.bookmark.includes(postId) === false) {
+      let updatedUser = await user.updateOne({
+        $push: { bookmark: postId },
+        new: true,
+      });
+      return res.status(200).json({
+        message: "bookmarked successfull",
+        updatedUser,
+      });
+    } else {
+      return res.status(200).json({
+        message: "bookmark already",
+        user,
+      });
+    }
+  } catch (err) {
+    console.error(err, "error while bookmarking post");
+  }
+};
+
+const getBookmarkPost = async (req, res) => {
+  let userId = req.params.id;
+  try {
+    let user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json("user not found");
+    }
+
+    let allBookmarkPost = await Promise.all(
+      user.bookmark.map((postId) => {
+        return Post.findById(postId);
+      })
+    );
+
+    return res.status(200).json({
+      message: "All bookmark post",
+      allBookmarkPost,
+    });
+  } catch (error) {
+    console.error(error, "error while fetching a bookmark");
+  }
+};
+
 module.exports = {
   updateUser,
   deleteUser,
   fetchUser,
   followUser,
   unfollowUser,
+  bookmarkPost,
+  getBookmarkPost,
 };

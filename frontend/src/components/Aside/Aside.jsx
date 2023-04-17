@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext, useState } from "react";
 import style from "./aside.module.css";
 import {
   FaRocketchat,
@@ -14,19 +14,59 @@ import {
   TbShirtSport,
 } from "react-icons/tb";
 import { VscGlobe, VscRss } from "react-icons/vsc";
+import axios from "axios";
+import { baseUrl } from "../constants";
+import BookmarkContext from "../../Contex/BookmarkContext";
 // import profilePicture from "../../assets/user/img2.jpg";
 
 const Aside = () => {
   const userDetails = localStorage.getItem("user");
   const user = JSON.parse(userDetails);
+  const userId = user._id;
   const { profilePicture } = user;
+
+  const { setBookMarks, setIsBookmarkClick } = useContext(BookmarkContext);
+
+  // Fetching bookmark post from backend
+  const getBookmarkPost = async () => {
+    try {
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      };
+      const response = await axios.get(
+        `${baseUrl}/user/bookmarkPosts/${userId}`,
+        config
+      );
+
+      if (response.status === 200) {
+        console.log("data", response.data.allBookmarkPost);
+        setBookMarks(response.data.allBookmarkPost);
+        setIsBookmarkClick(true);
+      } else {
+        //todo : handle this error gracefully
+      }
+    } catch (error) {
+      //todo : handle this error gracefully
+      console.log("Feching bookmark failed");
+    }
+  };
+
+  // toggeling feed from bookmark or news
+  const getFeed = () => {
+    setIsBookmarkClick(!FaBookmark);
+  };
+
   return (
     <div className={style.asideContainer}>
       <div className={style.asideMenuWrapper}>
         <ul>
           <li className={style.menuList}>
             <VscRss className={style.asideMenuIcon} />
-            <span className={style.asideMenuText}>Feed</span>
+            <span className={style.asideMenuText} onClick={getFeed}>
+              Feed
+            </span>
           </li>
           <li className={style.menuList}>
             <FaRocketchat className={style.asideMenuIcon} />
@@ -42,7 +82,9 @@ const Aside = () => {
           </li>
           <li className={style.menuList}>
             <FaBookmark className={style.asideMenuIcon} />
-            <span className={style.asideMenuText}>Bookmarks</span>
+            <span className={style.asideMenuText} onClick={getBookmarkPost}>
+              Bookmarks
+            </span>
           </li>
           <li className={style.menuList}>
             <img

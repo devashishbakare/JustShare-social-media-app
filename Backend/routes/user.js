@@ -6,4 +6,6 @@ router.delete("/delete/:id", userController.deleteUser);
 router.get("/getUser/:id", userController.fetchUser);
 router.put("/follow/:id", userController.followUser);
 router.put("/unfollow/:id", userController.unfollowUser);
+router.post("/bookmark", userController.bookmarkPost);
+router.get("/bookmarkPosts/:id", userController.getBookmarkPost);
 module.exports = router;

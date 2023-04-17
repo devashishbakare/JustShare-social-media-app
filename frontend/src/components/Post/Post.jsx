@@ -35,6 +35,7 @@ const Post = React.memo(({ props }) => {
       },
     };
     const fetchUserDetails = async () => {
+      setIsLoading(true);
       const response = await axios.get(
         `${baseUrl}/user/getUser/${props.userId}`,
         config
@@ -44,6 +45,7 @@ const Post = React.memo(({ props }) => {
         setUserName(response.data.userName);
         setProfilePicture(response.data.profilePicture);
       }
+      setIsLoading(false);
     };
     fetchUserDetails();
   }, []);
@@ -158,98 +160,113 @@ const Post = React.memo(({ props }) => {
 
   return (
     <div className={style.postContainer}>
-      <div className={style.postTopDetails}>
-        <div className={style.postTopDetailsInfo}>
-          <img
-            className={style.postUserImg}
-            src={profilePicture}
-            alt="user_image"
-          />
-          <span className={style.postUserName}>{userName}</span>
-          {/* <span className={style.postTiming}>5 min ago</span> */}
-        </div>
-        <div className="postHeadingIcon">
-          <FaEllipsisV
-            className={style.postHeadingInfoIcon}
-            onClick={handleShowOption}
-          />
-          {showOption && (
-            <div className={style.menuContainer}>
-              <PostMenuOptions postDetails={menuOptionProps} />
+      {isLoading ? (
+        <Spinner />
+      ) : (
+        <>
+          <div className={style.postTopDetails}>
+            <div className={style.postTopDetailsInfo}>
+              <img
+                className={style.postUserImg}
+                src={profilePicture}
+                alt="user_image"
+              />
+              <span className={style.postUserName}>{userName}</span>
+              {/* <span className={style.postTiming}>5 min ago</span> */}
+            </div>
+            <div className="postHeadingIcon">
+              <FaEllipsisV
+                className={style.postHeadingInfoIcon}
+                onClick={handleShowOption}
+              />
+              {showOption && (
+                <div className={style.menuContainer}>
+                  <PostMenuOptions postDetails={menuOptionProps} />
+                </div>
+              )}
+            </div>
+          </div>
+          <div className={style.postDescImg}>
+            <div className={style.postDesc}>
+              <span className={style.descText}>{props.desc}</span>
+            </div>
+            <div className={style.postImgDiv}>
+              <img
+                className={style.postImg}
+                src={props.image}
+                alt="Post_image"
+              />
+            </div>
+          </div>
+          <div className={style.postBottomWrapper}>
+            <div className={style.postButtomImgWrapper}>
+              <img
+                src={like}
+                alt="Like_Image"
+                className={style.postLikeImg}
+                onClick={handleLikePost}
+              />
+              <img
+                src={love}
+                alt="Love_Image"
+                className={style.postLoveImg}
+                onClick={handleLikePost}
+              />
+              {likeCount === 0 ? (
+                <span></span>
+              ) : (
+                <span className={style.likeCount}>
+                  {likeCount} people like it
+                </span>
+              )}
+            </div>
+            <div className={style.postCommnetWrapper}>
+              {/* Todo : we have to use link in router-dom */}
+              <span className={style.commentLink} onClick={fetchPostComments}>
+                Comments
+              </span>
+            </div>
+          </div>
+          {toggleComment && (
+            <div className={style.commentContainer}>
+              <hr className={style.postCommentDivider} />
+              <div className={style.commentForm}>
+                <form
+                  className={style.commentFormFrom}
+                  onSubmit={postCommentHandler}
+                >
+                  <span className={style.inputWrapper}>
+                    <input
+                      type="text"
+                      name="comment"
+                      onChange={handleCommentChange}
+                      className={style.commentInputSection}
+                      placeholder="Add your comment here.."
+                    />
+                  </span>
+
+                  <button className={style.commentButton}>Post Comment</button>
+                  <AiFillCloseCircle
+                    onClick={handleCloseCommentsClick}
+                    className={style.closeCommentButton}
+                  />
+                </form>
+              </div>
+              <div className={style.commentListWrapper}>
+                {isLoading ? (
+                  <Spinner />
+                ) : (
+                  comments.map((singleComment) => (
+                    <PostComments
+                      key={singleComment._id}
+                      comment={singleComment}
+                    />
+                  ))
+                )}
+              </div>
             </div>
           )}
-        </div>
-      </div>
-      <div className={style.postDescImg}>
-        <div className={style.postDesc}>
-          <span className={style.descText}>{props.desc}</span>
-        </div>
-        <div className={style.postImgDiv}>
-          <img className={style.postImg} src={props.image} alt="Post_image" />
-        </div>
-      </div>
-      <div className={style.postBottomWrapper}>
-        <div className={style.postButtomImgWrapper}>
-          <img
-            src={like}
-            alt="Like_Image"
-            className={style.postLikeImg}
-            onClick={handleLikePost}
-          />
-          <img
-            src={love}
-            alt="Love_Image"
-            className={style.postLoveImg}
-            onClick={handleLikePost}
-          />
-          {likeCount === 0 ? (
-            <span></span>
-          ) : (
-            <span className={style.likeCount}>{likeCount} people like it</span>
-          )}
-        </div>
-        <div className={style.postCommnetWrapper}>
-          {/* Todo : we have to use link in router-dom */}
-          <span className={style.commentLink} onClick={fetchPostComments}>
-            Comments
-          </span>
-        </div>
-      </div>
-      {toggleComment && (
-        <div className={style.commentContainer}>
-          <hr className={style.postCommentDivider} />
-          <div className={style.commentForm}>
-            <form
-              className={style.commentFormFrom}
-              onSubmit={postCommentHandler}
-            >
-              <span className={style.inputWrapper}>
-                <input
-                  type="text"
-                  name="comment"
-                  onChange={handleCommentChange}
-                  className={style.commentInputSection}
-                  placeholder="Add your comment here.."
-                />
-              </span>
-
-              <button className={style.commentButton}>Post Comment</button>
-              <AiFillCloseCircle
-                onClick={handleCloseCommentsClick}
-                className={style.closeCommentButton}
-              />
-            </form>
-          </div>
-          <div className={style.commentListWrapper}>
-            {isLoading ? (
-              <Spinner />
-            ) : (
-              comments.map((singleComment) => (
-                <PostComments key={singleComment._id} comment={singleComment} />
-              ))
-            )}
-          </div>
-        </div>
+        </>
       )}
     </div>
   );

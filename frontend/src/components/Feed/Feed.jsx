@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import style from "./feed.module.css";
 import { FcAddImage, FcLike } from "react-icons/fc";
 import Post from "../Post/Post";
 import axios from "axios";
 import { baseUrl } from "../constants";
 import FeedContext from "../../Contex/FeedContext";
+import BookmarkContext from "../../Contex/BookmarkContext";
 const Feed = () => {
   const [posts, setPosts] = useState([]);
 
@@ -20,6 +21,8 @@ const Feed = () => {
     desc: "",
     image: "",
   });
+
+  const { bookmarks, isBookmarkClick } = useContext(BookmarkContext);
 
   // handeling a input and savin in object
   const handleChange = (event) => {
@@ -102,57 +105,73 @@ const Feed = () => {
     fetchTimeLine();
   }, []);
 
-  return (
-    <>
-      <div className={style.feedContainer}>
-        <div className={style.uploadPostContainer}>
-          <form onSubmit={handleSubmit}>
-            <div className={style.profileAndDesription}>
-              <img
-                src={profilePicture}
-                alt="profile img"
-                className={style.uploadPostProfilePhoto}
-              />
-              <input
-                type="text"
-                className={style.uploadPostDescription}
-                placeholder={`whats in your mind ${userName}...`}
-                name="desc"
-                onChange={handleChange}
-              />
-            </div>
-            <hr />
-            <div className="uploadSharingDetails">
-              <ul className={style.listItmes}>
-                <li>
-                  <FcAddImage className={style.iconStyle} />
-                  <input
-                    type="file"
-                    className={style.uploadPostText}
-                    onChange={(e) => handleUploadPicture(e.target.files[0])}
-                  />
-                </li>
-                <li>
-                  <FcLike className={style.iconStyle} />
-                  <span className={style.uploadPostText}> Feelings</span>
-                </li>
-                <li>
-                  <button className={style.uploadShareButton}> Share</button>
-                </li>
-              </ul>
-            </div>
-          </form>
+  if (isBookmarkClick) {
+    return (
+      <>
+        <div className={style.feedContainer}>
+          <div className={style.uploadedPost}>
+            <FeedContext.Provider value={{ posts, setPosts }}>
+              {bookmarks.map((post) => (
+                <Post key={post._id} props={post} />
+              ))}
+            </FeedContext.Provider>
+          </div>
         </div>
-        <div className={style.uploadedPost}>
-          <FeedContext.Provider value={{ posts, setPosts }}>
-            {posts.map((post) => (
-              <Post key={post._id} props={post} />
-            ))}
-          </FeedContext.Provider>
+      </>
+    );
+  } else {
+    return (
+      <>
+        <div className={style.feedContainer}>
+          <div className={style.uploadPostContainer}>
+            <form onSubmit={handleSubmit}>
+              <div className={style.profileAndDesription}>
+                <img
+                  src={profilePicture}
+                  alt="profile img"
+                  className={style.uploadPostProfilePhoto}
+                />
+                <input
+                  type="text"
+                  className={style.uploadPostDescription}
+                  placeholder={`whats in your mind ${userName}...`}
+                  name="desc"
+                  onChange={handleChange}
+                />
+              </div>
+              <hr />
+              <div className="uploadSharingDetails">
+                <ul className={style.listItmes}>
+                  <li>
+                    <FcAddImage className={style.iconStyle} />
+                    <input
+                      type="file"
+                      className={style.uploadPostText}
+                      onChange={(e) => handleUploadPicture(e.target.files[0])}
+                    />
+                  </li>
+                  <li>
+                    <FcLike className={style.iconStyle} />
+                    <span className={style.uploadPostText}> Feelings</span>
+                  </li>
+                  <li>
+                    <button className={style.uploadShareButton}> Share</button>
+                  </li>
+                </ul>
+              </div>
+            </form>
+          </div>
+          <div className={style.uploadedPost}>
+            <FeedContext.Provider value={{ posts, setPosts }}>
+              {posts.map((post) => (
+                <Post key={post._id} props={post} />
+              ))}
+            </FeedContext.Provider>
+          </div>
         </div>
-      </div>
-    </>
-  );
+      </>
+    );
+  }
 };
 
 export default Feed;
