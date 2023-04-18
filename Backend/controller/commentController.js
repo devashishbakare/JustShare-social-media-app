@@ -177,6 +177,37 @@ const getPostComment = async (req, res) => {
     console.error("Unable to fetch commnets");
   }
 };
+
+// comment like
+const commentLike = async (req, res) => {
+  let commentId = req.body.commentId;
+  let userId = req.body.userId;
+
+  console.log(`user id is ${userId} commentId ${commentId}`);
+
+  try {
+    const response = {
+      like: false,
+      message: "like and dislike is done",
+    };
+    let comment = await Comment.findById(commentId);
+
+    if (!comment) return res.status(404).json("comment not found");
+
+    if (comment.like.includes(userId)) {
+      await comment.updateOne({ $pull: { like: userId } });
+      return res.status(200).json(response);
+    } else {
+      let status = await comment.updateOne({ $push: { like: userId } });
+      response.like = true;
+      return res.status(200).json(response);
+    }
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json("Error while liking a comment");
+  }
+};
+
 module.exports = {
   createComment,
   updateComment,
@@ -184,4 +215,5 @@ module.exports = {
   commentReply,
   getCommentReply,
   getPostComment,
+  commentLike,
 };

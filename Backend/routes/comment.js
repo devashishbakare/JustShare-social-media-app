@@ -7,4 +7,5 @@ router.delete("/delete", commentController.deleteComment);
 router.post("/reply", commentController.commentReply);
 router.get("/fetchReply", commentController.getCommentReply);
 router.get("/postComments", commentController.getPostComment);
+router.put("/like", commentController.commentLike);
 module.exports = router;

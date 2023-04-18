@@ -236,7 +236,7 @@
 
 .singleComment {
   height: auto;
-  width: 70%;
+  width: 400px;
   margin: 7px 0px 7px 15px;
   border: 1px solid black;
   padding: 10px;
@@ -244,6 +244,7 @@
   -webkit-box-shadow: 0px 0px 16px -8px rgba(0, 0, 0, 0.68);
   box-shadow: 0px 0px 16px -8px rgba(0, 0, 0, 0.68);
   /* transform: translateX(10px); */
+  /* border: 1px solid red; */
 }
 
 .likeReply {
@@ -252,8 +253,8 @@
   /* border: 1px solid green; */
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-top: 8px;
+  gap: 5px;
+  margin-top: 10px;
 }
 
 .singleCommentText {
@@ -301,5 +302,17 @@
   height: 30px;
   width: 30px;
   border-radius: 50%;
+  cursor: pointer;
+}
+
+/* like count */
+
+.commentLikeCount {
+  margin-left: 10px;
+
+  padding: auto;
+}
+
+.replyText {
   cursor: pointer;
 }

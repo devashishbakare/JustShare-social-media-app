@@ -1,13 +1,55 @@
-import React from "react";
+import React, { useState } from "react";
 import style from "./post.module.css";
 import { FaEllipsisH } from "react-icons/fa";
-import like from "../../assets/like.jpeg";
+import likeImg from "../../assets/like.jpeg";
+import axios from "axios";
+import { baseUrl } from "../constants";
+// import commentReply from "./commentReply";
+import CommentReply from "./CommentReply";
 // import profilePicture from "../../assets/user/img4.jpeg";
 const PostComments = React.memo(({ comment }) => {
-  console.log(comment, "comment");
-  const { commenterProfilePicture, commenterName, text } = comment;
+  //console.log(comment, "comment");
+  const { commenterProfilePicture, commenterName, text, like, reply } = comment;
+  const [likeCount, setLikeCount] = useState(like.length);
+  const [isReplyclick, setIsReplyClick] = useState(false);
+  const userDetails = localStorage.getItem("user");
+  const user = JSON.parse(userDetails);
+  const userId = user._id;
+  const handleLikeComment = async () => {
+    try {
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      };
+      const commentInfo = {
+        userId,
+        commentId: comment._id,
+      };
 
-  const handleLikeComment = () => {};
+      const response = await axios.put(
+        `${baseUrl}/post/comment/like`,
+        commentInfo,
+        config
+      );
+      if (response.status === 200) {
+        if (response.data.like) {
+          setLikeCount(likeCount + 1);
+        } else {
+          setLikeCount(likeCount - 1);
+        }
+      } else {
+        //todo : handle error gracefully
+      }
+    } catch (err) {
+      console.error(err, "error while liking or disliking post");
+    }
+  };
+
+  const replyCommentHandler = () => {
+    console.log("Reply got clicked");
+    setIsReplyClick(!isReplyclick);
+  };
 
   return (
     <>
@@ -26,13 +68,25 @@ const PostComments = React.memo(({ comment }) => {
           </div>
           <span className={style.singleCommentText}>{text}</span>
           <div className={style.likeReply}>
+            {likeCount > 0 && (
+              <span className={style.commentLikeCount}>{likeCount}</span>
+            )}
             <img
-              src={like}
+              src={likeImg}
               alt="Like_Image"
               className={style.commentLikeImg}
               onClick={handleLikeComment}
             />
-            <span>Reply</span>
+            <span className={style.replyText} onClick={replyCommentHandler}>
+              Reply
+            </span>
+            {isReplyclick && (
+              <CommentReply
+                commentData={comment}
+                exitReplyBox={isReplyclick}
+                setExitReplyBox={setIsReplyClick}
+              />
+            )}
           </div>
         </div>
       </div>

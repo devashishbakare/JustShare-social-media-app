@@ -27,6 +27,7 @@ const Post = React.memo(({ props }) => {
   const user = JSON.parse(userDetails);
   const userId = user._id;
   const postId = props._id;
+
   //Featching details of user who made this post
   useEffect(() => {
     const config = {
@@ -50,6 +51,7 @@ const Post = React.memo(({ props }) => {
     fetchUserDetails();
   }, []);
 
+  //post like updation request
   const handleLikePost = async () => {
     try {
       const config = {
