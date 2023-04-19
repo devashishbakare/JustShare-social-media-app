@@ -96,11 +96,18 @@ const commentReply = async (req, res) => {
   try {
     let post = await Post.findById(postId);
     let comment = await Comment.findById(commentId);
+    let user = await User.findById(userId);
+
+    if (!post || !comment || !user) {
+      return res.status(404).json("user or post or comment not found");
+    }
 
     let commentReply = new Comment({
       postId: postId,
       userId: userId,
-      text: req.body.text,
+      text: text,
+      commenterName: user.userName,
+      commenterProfilePicture: user.profilePicture,
     });
     await commentReply.save();
 

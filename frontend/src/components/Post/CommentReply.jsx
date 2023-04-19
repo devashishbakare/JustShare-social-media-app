@@ -3,22 +3,50 @@ import style from "./commentReply.module.css";
 import PostComments from "./PostComments";
 import postStyle from "./post.module.css";
 import { AiFillCloseCircle } from "react-icons/ai";
-const commentReply = React.memo((props) => {
+import axios from "axios";
+import { baseUrl } from "../constants";
+const CommentReply = React.memo((props) => {
   const { commentData, exitReplyBox, setExitReplyBox } = props;
 
   const userDetails = localStorage.getItem("user");
   const user = JSON.parse(userDetails);
   const userId = user._id;
-  const postId = commentReply.postId;
+  const postId = props.postId;
   const [text, setText] = useState("");
 
   const handleCommentChange = (e) => {
-    setText(...text, e.target.value);
+    setText(e.target.value);
   };
 
-  const postReplyCommentHandler = (event) => {
+  const postReplyCommentHandler = async (event) => {
     event.preventDefault();
-    console.log("sending data to backend");
+    console.log(text);
+
+    try {
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      };
+      const requestInfo = {
+        userId: userId,
+        postId: commentData.postId,
+        text: text,
+        commentId: commentData._id,
+      };
+
+      const response = await axios.put(
+        `${baseUrl}/post/comment/reply`,
+        requestInfo,
+        config
+      );
+      if (response.status === 200) {
+        console.log(response.data);
+      }
+    } catch (error) {
+      console.error(error, "error while adding comment");
+    }
+
     //setExitReplyBox(exitReplyBox);
   };
   return (
@@ -56,4 +84,4 @@ const commentReply = React.memo((props) => {
   );
 });
 
-export default commentReply;
+export default CommentReply;

@@ -4,8 +4,8 @@ import { FaEllipsisH } from "react-icons/fa";
 import likeImg from "../../assets/like.jpeg";
 import axios from "axios";
 import { baseUrl } from "../constants";
-// import commentReply from "./commentReply";
 import CommentReply from "./CommentReply";
+// import CommentReply from "./CommentReply";
 // import profilePicture from "../../assets/user/img4.jpeg";
 const PostComments = React.memo(({ comment }) => {
   //console.log(comment, "comment");
