@@ -18,6 +18,7 @@ const Post = React.memo(({ props }) => {
   const [likeCount, setLikeCount] = useState(props.like.length);
   const [toggleComment, setToggleComment] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [isCommentsLoading, setIsCommentLoading] = useState(true);
   const [comments, setComments] = useState([]);
   const [comment, setComment] = useState("");
   const [showOption, setShowOption] = useState(false);
@@ -86,7 +87,7 @@ const Post = React.memo(({ props }) => {
   const fetchPostComments = async () => {
     setToggleComment(!toggleComment);
 
-    setIsLoading(true);
+    setIsCommentLoading(true);
     //fetching comment from backend
     try {
       const config = {
@@ -111,7 +112,7 @@ const Post = React.memo(({ props }) => {
     } catch (err) {
       console.error(err, "Errow while fetching comments");
     }
-    setIsLoading(false);
+    setIsCommentLoading(false);
   };
 
   const handleCloseCommentsClick = () => {
@@ -255,7 +256,7 @@ const Post = React.memo(({ props }) => {
                 </form>
               </div>
               <div className={style.commentListWrapper}>
-                {isLoading ? (
+                {isCommentsLoading ? (
                   <Spinner />
                 ) : (
                   comments.map((singleComment) => (

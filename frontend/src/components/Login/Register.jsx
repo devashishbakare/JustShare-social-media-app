@@ -61,6 +61,8 @@ const Register = () => {
           ...formData,
           profilePicture: uploadedImageUrl.url.toString(),
         });
+      } else {
+        //todo : handle eror or push notification for img formate is not supported please, upload in png jpeg or jpg only
       }
     } catch (error) {
       console.log(error);

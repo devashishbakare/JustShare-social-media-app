@@ -34,11 +34,13 @@ const Login = () => {
         loginDetails,
         config
       );
-      if (response) {
+      if (response.status === 200) {
         console.log("response", response.data.user);
         const userDetails = JSON.stringify(response.data.user);
         localStorage.setItem("user", userDetails);
         navigate("/home");
+      } else {
+        //todo : handle error here or push a notification
       }
     } catch (err) {
       console.error(err);

@@ -5,16 +5,23 @@ import likeImg from "../../assets/like.jpeg";
 import axios from "axios";
 import { baseUrl } from "../constants";
 import CommentReply from "./CommentReply";
+import Spinners from "../Spinners";
 // import CommentReply from "./CommentReply";
 // import profilePicture from "../../assets/user/img4.jpeg";
 const PostComments = React.memo(({ comment }) => {
   //console.log(comment, "comment");
-  const { commenterProfilePicture, commenterName, text, like, reply } = comment;
+  const { commenterProfilePicture, commenterName, text, like, postId } =
+    comment;
   const [likeCount, setLikeCount] = useState(like.length);
   const [isReplyclick, setIsReplyClick] = useState(false);
+  const [updatedComment, setUpdatedComment] = useState(comment);
+  const [commentReply, setCommentReply] = useState([]);
+  const [isCommentsLoading, setIsCommentLoading] = useState(true);
+  const [showReply, setShowReply] = useState(false);
   const userDetails = localStorage.getItem("user");
   const user = JSON.parse(userDetails);
   const userId = user._id;
+  console.log("count of reply array", updatedComment.reply.length);
   const handleLikeComment = async () => {
     try {
       const config = {
@@ -51,6 +58,31 @@ const PostComments = React.memo(({ comment }) => {
     setIsReplyClick(!isReplyclick);
   };
 
+  const fetchReply = async () => {
+    setShowReply(!showReply);
+    setIsCommentLoading(true);
+    //fetching comment from backend
+    try {
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      };
+
+      const response = await axios.get(
+        `${baseUrl}/post/comment/fetchReply/${comment._id}`,
+        config
+      );
+
+      if (response.status === 200) {
+        console.log(response.data);
+        setCommentReply(response.data);
+      }
+    } catch (err) {
+      console.error(err, "Errow while fetching comments");
+    }
+    setIsCommentLoading(false);
+  };
   return (
     <>
       <div className={style.commentListWrapper}>
@@ -85,10 +117,45 @@ const PostComments = React.memo(({ comment }) => {
                 commentData={comment}
                 exitReplyBox={isReplyclick}
                 setExitReplyBox={setIsReplyClick}
+                setUpdateCommentReply={setUpdatedComment}
               />
+            )}
+            {updatedComment.reply.length > 0 && (
+              <>
+                {showReply ? (
+                  <span className={style.showReplyButton} onClick={fetchReply}>
+                    Hide Replies
+                  </span>
+                ) : (
+                  <span className={style.showReplyButton} onClick={fetchReply}>
+                    Show Replies
+                  </span>
+                )}
+              </>
             )}
           </div>
         </div>
+        {showReply && (
+          <>
+            {isCommentsLoading ? (
+              <Spinners />
+            ) : (
+              <>
+                <div className={style.showReplyWrapper}>
+                  <div className={style.replyLeftSide}></div>
+                  <div className={style.replyRightSide}>
+                    {commentReply.map((repliedComment) => (
+                      <PostComments
+                        key={repliedComment._id}
+                        comment={repliedComment}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </>
+            )}
+          </>
+        )}
       </div>
     </>
   );

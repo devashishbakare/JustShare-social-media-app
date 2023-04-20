@@ -6,14 +6,16 @@ import { AiFillCloseCircle } from "react-icons/ai";
 import axios from "axios";
 import { baseUrl } from "../constants";
 const CommentReply = React.memo((props) => {
-  const { commentData, exitReplyBox, setExitReplyBox } = props;
-
+  const { commentData, exitReplyBox, setExitReplyBox, setUpdateCommentReply } =
+    props;
   const userDetails = localStorage.getItem("user");
   const user = JSON.parse(userDetails);
   const userId = user._id;
   const postId = props.postId;
   const [text, setText] = useState("");
-
+  const [updatedComment, setUpdatedComment] = useState([]);
+  const [showReply, setShowReply] = useState(false);
+  //todo : we just set a comment here I think we need to take comment state from postCommets
   const handleCommentChange = (e) => {
     setText(e.target.value);
   };
@@ -41,13 +43,14 @@ const CommentReply = React.memo((props) => {
         config
       );
       if (response.status === 200) {
-        console.log(response.data);
+        setUpdateCommentReply(response.data);
       }
     } catch (error) {
       console.error(error, "error while adding comment");
     }
-
-    //setExitReplyBox(exitReplyBox);
+    // todo : we need to add a show reply button to see a reply, and add css as well for that
+    // todo : set exit reply will remove the box from center
+    setExitReplyBox(!exitReplyBox);
   };
   return (
     <div className={style.commentReplyContainer}>

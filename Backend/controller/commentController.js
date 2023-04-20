@@ -95,10 +95,9 @@ const commentReply = async (req, res) => {
 
   try {
     let post = await Post.findById(postId);
-    let comment = await Comment.findById(commentId);
     let user = await User.findById(userId);
 
-    if (!post || !comment || !user) {
+    if (!post || !user) {
       return res.status(404).json("user or post or comment not found");
     }
 
@@ -111,11 +110,15 @@ const commentReply = async (req, res) => {
     });
     await commentReply.save();
 
-    if (post && comment) {
-      let commentReplyStatus = await comment.updateOne({
-        $push: { reply: commentReply._id },
-      });
-      return res.status(200).json(commentReplyStatus);
+    if (post && user) {
+      let updatedComment = await Comment.findByIdAndUpdate(
+        { _id: commentId },
+        {
+          $push: { reply: commentReply._id },
+        },
+        { new: true }
+      );
+      return res.status(200).json(updatedComment);
     } else {
       return res.status(404).json("Post Or comment  not found");
     }
@@ -126,22 +129,17 @@ const commentReply = async (req, res) => {
 };
 
 const getCommentReply = async (req, res) => {
-  const { postId, commentId } = req.body;
-
+  const commentId = req.params.id;
   try {
-    const post = await Post.findById(postId);
     const comment = await Comment.findById(commentId);
-
-    if (post && comment) {
+    if (!comment) return res.status(404).json("comment not found");
+    if (comment) {
       const allReply = await Promise.all(
         comment.reply.map((currentCommentId) => {
           return Comment.findById(currentCommentId);
         })
       );
-
       return res.status(200).json(allReply);
-    } else {
-      return res.status(404).json("Post or comment not found");
     }
   } catch (err) {
     console.error(err);
