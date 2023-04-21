@@ -5,7 +5,8 @@ import Post from "../Post/Post";
 import axios from "axios";
 import { baseUrl } from "../constants";
 import FeedContext from "../../Contex/FeedContext";
-import BookmarkContext from "../../Contex/BookmarkContext";
+import ContentContext from "../../Contex/ContentContext";
+import News from "../NewsFeed/News";
 const Feed = () => {
   const [posts, setPosts] = useState([]);
 
@@ -22,7 +23,8 @@ const Feed = () => {
     image: "",
   });
 
-  const { bookmarks, isBookmarkClick } = useContext(BookmarkContext);
+  const { bookmarks, isBookmarkClick } = useContext(ContentContext);
+  const { news, isNewsClick } = useContext(ContentContext);
 
   // handeling a input and savin in object
   const handleChange = (event) => {
@@ -116,6 +118,14 @@ const Feed = () => {
               ))}
             </FeedContext.Provider>
           </div>
+        </div>
+      </>
+    );
+  } else if (isNewsClick) {
+    return (
+      <>
+        <div className={style.newsFeedContainer}>
+          <News />
         </div>
       </>
     );

@@ -16,7 +16,7 @@ import {
 import { VscGlobe, VscRss } from "react-icons/vsc";
 import axios from "axios";
 import { baseUrl } from "../constants";
-import BookmarkContext from "../../Contex/BookmarkContext";
+import ContentContext from "../../Contex/ContentContext";
 // import profilePicture from "../../assets/user/img2.jpg";
 
 const Aside = () => {
@@ -25,7 +25,8 @@ const Aside = () => {
   const userId = user._id;
   const { profilePicture } = user;
 
-  const { setBookMarks, setIsBookmarkClick } = useContext(BookmarkContext);
+  const { setBookMarks, setIsBookmarkClick } = useContext(ContentContext);
+  const { setIsNewsClick, setNews } = useContext(ContentContext);
 
   // Fetching bookmark post from backend
   const getBookmarkPost = async () => {
@@ -58,6 +59,26 @@ const Aside = () => {
     setIsBookmarkClick(!FaBookmark);
   };
 
+  const setNewsClick = async () => {
+    const apiKey = "43a9a8bb1a1a4bf2b933419dc7a6d38d";
+    const url = "https://newsapi.org/v2/top-headlines?country=us";
+
+    try {
+      // const response = await fetch(url, {
+      //   headers: {
+      //     "X-Api-Key": apiKey,
+      //   },
+      // });
+      // const data = await response.json();
+      // console.log(data.articles);
+      // setNews(data.articles);
+      setIsBookmarkClick(false);
+      setIsNewsClick(true);
+    } catch (error) {
+      console.log(error, "error in fetching news from api");
+    }
+  };
+
   return (
     <div className={style.asideContainer}>
       <div className={style.asideMenuWrapper}>
@@ -74,7 +95,9 @@ const Aside = () => {
           </li>
           <li className={style.menuList}>
             <FaRegNewspaper className={style.asideMenuIcon} />
-            <span className={style.asideMenuText}>News</span>
+            <span className={style.asideMenuText} onClick={setNewsClick}>
+              News
+            </span>
           </li>
           <li className={style.menuList}>
             <FaUserFriends className={style.asideMenuIcon} />

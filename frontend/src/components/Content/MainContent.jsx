@@ -3,37 +3,47 @@ import style from "./mainContent.module.css";
 import Aside from "../Aside/Aside";
 import Feed from "../Feed/Feed";
 import Related from "../Related/Related";
-import BookmarkContext from "../../Contex/BookmarkContext";
+import ContentContext from "../../Contex/ContentContext";
 const MainContent = () => {
   const [bookmarks, setBookMarks] = useState([]);
   const [isBookmarkClick, setIsBookmarkClick] = useState(false);
+  const [news, setNews] = useState([]);
+  const [isNewsClick, setIsNewsClick] = useState(false);
 
   return (
     <>
       <div className={style.homeContentContainer}>
         <div className={style.aside}>
-          <BookmarkContext.Provider
+          <ContentContext.Provider
             value={{
               bookmarks,
               setBookMarks,
               isBookmarkClick,
               setIsBookmarkClick,
+              news,
+              setNews,
+              isNewsClick,
+              setIsNewsClick,
             }}
           >
             <Aside />
-          </BookmarkContext.Provider>
+          </ContentContext.Provider>
         </div>
         <div className={style.feed}>
-          <BookmarkContext.Provider
+          <ContentContext.Provider
             value={{
               bookmarks,
               setBookMarks,
               isBookmarkClick,
               setIsBookmarkClick,
+              news,
+              setNews,
+              isNewsClick,
+              setIsNewsClick,
             }}
           >
             <Feed />
-          </BookmarkContext.Provider>
+          </ContentContext.Provider>
         </div>
         <div className={style.related}>
           <Related />

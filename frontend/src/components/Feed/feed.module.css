@@ -7,6 +7,11 @@
 ::-webkit-scrollbar-thumb {
   background-color: rgb(179, 179, 179);
 }
+.newsFeedContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 .feedContainer {
   /* border: 2px solid green; */
   height: 100%;
