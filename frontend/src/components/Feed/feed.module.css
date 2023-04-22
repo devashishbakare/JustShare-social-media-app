@@ -11,12 +11,19 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  max-height: 800px;
+  overflow-y: scroll;
+  border: 3px solid red;
 }
 .feedContainer {
   /* border: 2px solid green; */
   height: 100%;
   max-height: 800px;
   overflow-y: scroll;
+  margin-left: 3%;
 }
 .uploadPostContainer {
   height: 150px;

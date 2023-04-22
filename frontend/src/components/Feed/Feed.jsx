@@ -25,6 +25,7 @@ const Feed = () => {
 
   const { bookmarks, isBookmarkClick } = useContext(ContentContext);
   const { news, isNewsClick } = useContext(ContentContext);
+  console.log("length", news.length);
 
   // handeling a input and savin in object
   const handleChange = (event) => {
@@ -124,8 +125,10 @@ const Feed = () => {
   } else if (isNewsClick) {
     return (
       <>
-        <div className={style.newsFeedContainer}>
-          <News />
+        <div className={style.feedContainer}>
+          {news.map((eachNews, index) => (
+            <News key={index} props={eachNews} />
+          ))}
         </div>
       </>
     );

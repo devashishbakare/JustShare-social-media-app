@@ -64,14 +64,14 @@ const Aside = () => {
     const url = "https://newsapi.org/v2/top-headlines?country=us";
 
     try {
-      // const response = await fetch(url, {
-      //   headers: {
-      //     "X-Api-Key": apiKey,
-      //   },
-      // });
-      // const data = await response.json();
-      // console.log(data.articles);
-      // setNews(data.articles);
+      const response = await fetch(url, {
+        headers: {
+          "X-Api-Key": apiKey,
+        },
+      });
+      const data = await response.json();
+      console.log(data.articles);
+      setNews(data.articles);
       setIsBookmarkClick(false);
       setIsNewsClick(true);
     } catch (error) {
@@ -79,6 +79,25 @@ const Aside = () => {
     }
   };
 
+  const fetchSportNews = async () => {
+    const apiKey = "43a9a8bb1a1a4bf2b933419dc7a6d38d";
+    const url = "https://newsapi.org/v2/top-headlines/sources?category=sports";
+
+    try {
+      const response = await fetch(url, {
+        headers: {
+          "X-Api-Key": apiKey,
+        },
+      });
+      const data = await response.json();
+      console.log(data.articles);
+      setNews(data.articles);
+      setIsBookmarkClick(false);
+      setIsNewsClick(true);
+    } catch (error) {
+      console.log(error, "error in fetching news from api");
+    }
+  };
   return (
     <div className={style.asideContainer}>
       <div className={style.asideMenuWrapper}>
@@ -146,7 +165,9 @@ const Aside = () => {
           </li>
           <li className={style.menuList}>
             <TbShirtSport className={style.asideMenuIcon} />
-            <span className={style.asideMenuText}>Sports</span>
+            <span className={style.asideMenuText} onClick={fetchSportNews}>
+              Sports
+            </span>
           </li>
         </ul>
       </div>

@@ -12,12 +12,27 @@ Trump can't claim 'logistical burdens' if he skips upcoming trial in NYC, judge 
   margin: 5px;
   -webkit-box-shadow: 0px 0px 16px -8px rgba(0, 0, 0, 0.68);
   box-shadow: 0px 0px 16px -8px rgba(0, 0, 0, 0.68);
+  margin-top: 10px;
+  /* border: 3px solid red; */
 }
 
 .newsImgContainer {
   /* border: 1px solid red; */
   height: auto;
   width: 100%;
+}
+
+.headline {
+  padding: 7px;
+  background-color: black;
+}
+.headlineText {
+  /* margin: 10px 0px; */
+  color: #fff;
+  font-size: 20px;
+  font-weight: bold;
+  text-align: left;
+  text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
 }
 
 .newsOtherInfoWrapper {
@@ -45,25 +60,6 @@ Trump can't claim 'logistical burdens' if he skips upcoming trial in NYC, judge 
   width: 100%;
   object-fit: cover;
 }
-
-.newsHeadingText {
-  position: absolute;
-  top: 75%;
-  left: 1%;
-  /* transform: translate(-50%, -50%); */
-  z-index: 1; /* Make sure the overlay appears above the image */
-  color: #fff; /* Set the text color */
-  font-size: 20px; /* Set the font size */
-  font-weight: bold; /* Set the font weight */
-  text-align: left; /* Center the text */
-  text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5); /* Add a text shadow */
-}
-
-/*  <div className={style.newsOtherInfo}>
-        <span className={style.newsInfoHeading}>Author:</span>
-        <span className={style.newsInfo}>John Doe</span>
-    </div>
- */
 
 .newsOtherInfo {
   display: flex;
@@ -100,4 +96,9 @@ Trump can't claim 'logistical burdens' if he skips upcoming trial in NYC, judge 
   width: 95%;
   padding: 5px;
   /* border: 3px solid green; */
+}
+
+.newsLink {
+  color: white;
+  text-decoration: none;
 }
