@@ -9,7 +9,7 @@ const MainContent = () => {
   const [isBookmarkClick, setIsBookmarkClick] = useState(false);
   const [news, setNews] = useState([]);
   const [isNewsClick, setIsNewsClick] = useState(false);
-
+  const [isCategoryClick, setIsCategoryClick] = useState(false);
   return (
     <>
       <div className={style.homeContentContainer}>
@@ -24,6 +24,7 @@ const MainContent = () => {
               setNews,
               isNewsClick,
               setIsNewsClick,
+              setIsCategoryClick,
             }}
           >
             <Aside />
@@ -40,6 +41,8 @@ const MainContent = () => {
               setNews,
               isNewsClick,
               setIsNewsClick,
+              isCategoryClick,
+              setIsCategoryClick,
             }}
           >
             <Feed />

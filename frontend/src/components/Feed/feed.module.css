@@ -7,7 +7,7 @@
 ::-webkit-scrollbar-thumb {
   background-color: rgb(179, 179, 179);
 }
-.newsFeedContainer {
+/* .newsFeedContainer {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -17,13 +17,14 @@
   max-height: 800px;
   overflow-y: scroll;
   border: 3px solid red;
-}
+} */
 .feedContainer {
   /* border: 2px solid green; */
   height: 100%;
   max-height: 800px;
   overflow-y: scroll;
-  margin-left: 3%;
+  padding: 2%;
+  /* margin-left: 3%; */
 }
 .uploadPostContainer {
   height: 150px;

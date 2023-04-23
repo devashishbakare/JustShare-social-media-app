@@ -3,16 +3,14 @@ import style from "./aside.module.css";
 import {
   FaRocketchat,
   FaRegNewspaper,
-  FaUserFriends,
   FaBookmark,
   FaFileInvoiceDollar,
   FaFilm,
+  FaHandHoldingMedical,
+  FaReact,
 } from "react-icons/fa";
-import {
-  TbChartHistogram,
-  TbCircuitBattery,
-  TbShirtSport,
-} from "react-icons/tb";
+import { TbShirtSport } from "react-icons/tb";
+import { MdSettingsInputAntenna } from "react-icons/md";
 import { VscGlobe, VscRss } from "react-icons/vsc";
 import axios from "axios";
 import { baseUrl } from "../constants";
@@ -26,7 +24,8 @@ const Aside = () => {
   const { profilePicture } = user;
 
   const { setBookMarks, setIsBookmarkClick } = useContext(ContentContext);
-  const { setIsNewsClick, setNews } = useContext(ContentContext);
+  const { setIsNewsClick, setNews, setIsCategoryClick } =
+    useContext(ContentContext);
 
   // Fetching bookmark post from backend
   const getBookmarkPost = async () => {
@@ -56,7 +55,9 @@ const Aside = () => {
 
   // toggeling feed from bookmark or news
   const getFeed = () => {
-    setIsBookmarkClick(!FaBookmark);
+    setIsBookmarkClick(false);
+    setIsNewsClick(false);
+    setIsCategoryClick(false);
   };
 
   const setNewsClick = async () => {
@@ -79,9 +80,9 @@ const Aside = () => {
     }
   };
 
-  const fetchSportNews = async () => {
+  const fetchCatagoryNews = async (categoryType) => {
     const apiKey = "43a9a8bb1a1a4bf2b933419dc7a6d38d";
-    const url = "https://newsapi.org/v2/top-headlines/sources?category=sports";
+    const url = `https://newsapi.org/v2/top-headlines/sources?category=${categoryType}`;
 
     try {
       const response = await fetch(url, {
@@ -90,10 +91,11 @@ const Aside = () => {
         },
       });
       const data = await response.json();
-      console.log(data.articles);
-      setNews(data.articles);
+      console.log(data.sources);
+      setNews(data.sources);
       setIsBookmarkClick(false);
-      setIsNewsClick(true);
+      setIsNewsClick(false);
+      setIsCategoryClick(true);
     } catch (error) {
       console.log(error, "error in fetching news from api");
     }
@@ -118,10 +120,10 @@ const Aside = () => {
               News
             </span>
           </li>
-          <li className={style.menuList}>
+          {/* <li className={style.menuList}>
             <FaUserFriends className={style.asideMenuIcon} />
             <span className={style.asideMenuText}>Friends</span>
-          </li>
+          </li> */}
           <li className={style.menuList}>
             <FaBookmark className={style.asideMenuIcon} />
             <span className={style.asideMenuText} onClick={getBookmarkPost}>
@@ -144,29 +146,66 @@ const Aside = () => {
 
         <ul>
           <li className={style.menuList}>
-            <TbCircuitBattery className={style.asideMenuIcon} />
-            <span className={style.asideMenuText}>Headlines</span>
-          </li>
-          <li className={style.menuList}>
             <VscGlobe className={style.asideMenuIcon} />
-            <span className={style.asideMenuText}>International</span>
+            <span
+              className={style.asideMenuText}
+              onClick={() => fetchCatagoryNews("general")}
+            >
+              General
+            </span>
           </li>
           <li className={style.menuList}>
             <FaFileInvoiceDollar className={style.asideMenuIcon} />
-            <span className={style.asideMenuText}>Finance</span>
+            <span
+              className={style.asideMenuText}
+              onClick={() => fetchCatagoryNews("business")}
+            >
+              Business
+            </span>
+          </li>
+          <li className={style.menuList}>
+            <FaHandHoldingMedical className={style.asideMenuIcon} />
+            <span
+              className={style.asideMenuText}
+              onClick={() => fetchCatagoryNews("health")}
+            >
+              Health
+            </span>
           </li>
           <li className={style.menuList}>
             <FaFilm className={style.asideMenuIcon} />
-            <span className={style.asideMenuText}>Entertainment</span>
+            <span
+              className={style.asideMenuText}
+              onClick={() => fetchCatagoryNews("entertainment")}
+            >
+              Entertainment
+            </span>
           </li>
           <li className={style.menuList}>
-            <TbChartHistogram className={style.asideMenuIcon} />
-            <span className={style.asideMenuText}>Market</span>
+            <FaReact className={style.asideMenuIcon} />
+            <span
+              className={style.asideMenuText}
+              onClick={() => fetchCatagoryNews("science")}
+            >
+              Science
+            </span>
           </li>
           <li className={style.menuList}>
             <TbShirtSport className={style.asideMenuIcon} />
-            <span className={style.asideMenuText} onClick={fetchSportNews}>
+            <span
+              className={style.asideMenuText}
+              onClick={() => fetchCatagoryNews("sports")}
+            >
               Sports
+            </span>
+          </li>
+          <li className={style.menuList}>
+            <MdSettingsInputAntenna className={style.asideMenuIcon} />
+            <span
+              className={style.asideMenuText}
+              onClick={() => fetchCatagoryNews("technology")}
+            >
+              Technology
             </span>
           </li>
         </ul>

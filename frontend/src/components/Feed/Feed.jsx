@@ -7,6 +7,7 @@ import { baseUrl } from "../constants";
 import FeedContext from "../../Contex/FeedContext";
 import ContentContext from "../../Contex/ContentContext";
 import News from "../NewsFeed/News";
+import CategoryNews from "../CategoryNews/CategoryNews";
 const Feed = () => {
   const [posts, setPosts] = useState([]);
 
@@ -24,7 +25,7 @@ const Feed = () => {
   });
 
   const { bookmarks, isBookmarkClick } = useContext(ContentContext);
-  const { news, isNewsClick } = useContext(ContentContext);
+  const { news, isNewsClick, isCategoryClick } = useContext(ContentContext);
   console.log("length", news.length);
 
   // handeling a input and savin in object
@@ -131,6 +132,14 @@ const Feed = () => {
           ))}
         </div>
       </>
+    );
+  } else if (isCategoryClick) {
+    return (
+      <div className={style.feedContainer}>
+        {news.map((eachNews, index) => (
+          <CategoryNews key={"category" + index} props={eachNews} />
+        ))}
+      </div>
     );
   } else {
     return (

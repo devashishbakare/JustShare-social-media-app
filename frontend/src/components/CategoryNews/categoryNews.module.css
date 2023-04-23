@@ -1,0 +1,65 @@
+/* 
+<div className={style.categoryNewsContainer}>
+    <div className={style.description}>
+    </div>
+    <div className={style.newsFooter}>
+    <button className={style.souceInfo}>BBC news</button>
+    <button className={style.souceInfo}>Read More</button>
+    </div>
+</div>
+     */
+
+.categoryNewsContainer {
+  border: 0.5px solid gray;
+  padding: 5px;
+  -webkit-box-shadow: 0px 0px 16px -8px rgba(0, 0, 0, 0.68);
+  box-shadow: 0px 0px 16px -8px rgba(0, 0, 0, 0.68);
+  margin-bottom: 10px;
+}
+.description {
+  padding: 10px;
+}
+
+.newsFooter {
+  height: 50px;
+  width: 100%;
+  /* border: 1px solid black; */
+  display: flex;
+  align-items: center;
+  gap: 4%;
+}
+
+.sourceWrapper {
+  height: 100%;
+  width: 70%;
+  /* border: 1px solid black; */
+  display: flex;
+  align-items: center;
+  margin-left: 5px;
+}
+.newsDirect {
+  height: 100%;
+  width: 25%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 10px;
+}
+
+.sourceHeading {
+  font-weight: 500;
+}
+.sourceText {
+  font-weight: 900;
+}
+.souceInfo {
+  height: 70%;
+  width: 100%;
+  border-radius: 15px;
+  background-color: black;
+  color: white;
+}
+.readMoreURL {
+  text-decoration: none;
+  color: white;
+}
