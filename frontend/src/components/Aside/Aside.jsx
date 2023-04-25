@@ -15,14 +15,14 @@ import { VscGlobe, VscRss } from "react-icons/vsc";
 import axios from "axios";
 import { baseUrl } from "../constants";
 import ContentContext from "../../Contex/ContentContext";
-// import profilePicture from "../../assets/user/img2.jpg";
+import { useNavigate } from "react-router-dom";
 
 const Aside = () => {
   const userDetails = localStorage.getItem("user");
   const user = JSON.parse(userDetails);
   const userId = user._id;
   const { profilePicture } = user;
-
+  const navigate = useNavigate();
   const { setBookMarks, setIsBookmarkClick } = useContext(ContentContext);
   const { setIsNewsClick, setNews, setIsCategoryClick } =
     useContext(ContentContext);
@@ -41,7 +41,7 @@ const Aside = () => {
       );
 
       if (response.status === 200) {
-        console.log("data", response.data.allBookmarkPost);
+        // console.log("data", response.data.allBookmarkPost);
         setBookMarks(response.data.allBookmarkPost);
         setIsBookmarkClick(true);
       } else {
@@ -71,7 +71,7 @@ const Aside = () => {
         },
       });
       const data = await response.json();
-      console.log(data.articles);
+      // console.log(data.articles);
       setNews(data.articles);
       setIsBookmarkClick(false);
       setIsNewsClick(true);
@@ -91,7 +91,7 @@ const Aside = () => {
         },
       });
       const data = await response.json();
-      console.log(data.sources);
+      // console.log(data.sources);
       setNews(data.sources);
       setIsBookmarkClick(false);
       setIsNewsClick(false);
@@ -120,10 +120,7 @@ const Aside = () => {
               News
             </span>
           </li>
-          {/* <li className={style.menuList}>
-            <FaUserFriends className={style.asideMenuIcon} />
-            <span className={style.asideMenuText}>Friends</span>
-          </li> */}
+
           <li className={style.menuList}>
             <FaBookmark className={style.asideMenuIcon} />
             <span className={style.asideMenuText} onClick={getBookmarkPost}>
@@ -136,7 +133,13 @@ const Aside = () => {
               alt="profile img"
               className={style.asideMenuImg}
             />
-            <span className={style.asideMenuText}>Profile</span>
+            <span
+              className={style.asideMenuText}
+              onClick={() => navigate("/profile", { state: userId })}
+              // navigate('/create', { state: { duplicateLifecycle } })
+            >
+              Profile
+            </span>
           </li>
         </ul>
       </div>

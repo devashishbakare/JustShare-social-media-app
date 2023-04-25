@@ -1,0 +1,75 @@
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.profilePageContainer {
+  height: 98vh;
+  width: 98vw;
+  /* border: 2px solid red; */
+  display: flex;
+  flex-direction: column;
+}
+
+.navBar {
+  border: 1px solid black;
+  height: 8%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.profileContainer {
+  height: 90%;
+  width: 100%;
+  border: 1px solid black;
+  display: flex;
+}
+.profileAside {
+  border: 1px solid green;
+  height: 100%;
+  flex: 3;
+}
+.profileContent {
+  border: 1px solid red;
+  height: 100%;
+  flex: 8;
+  display: flex;
+  flex-direction: column;
+  gap: 1%;
+}
+
+.profileDetailsContainer {
+  height: 25%;
+  width: 100%;
+  border: 1px solid black;
+}
+
+.feedAndFriendWrapper {
+  height: 74%;
+  width: 100%;
+  border: 1px solid green;
+  display: flex;
+  flex-direction: row;
+  gap: 1%;
+}
+
+/*  <div className={style.profileFeedContainer}></div>
+    <div className={style.friendsContainer}></div> */
+
+.profileFeedContainer {
+  height: 100%;
+  width: 64%;
+  border: 1px solid red;
+}
+.friendsContainer {
+  height: 100%;
+  width: 35%;
+
+  border: 1px solid black;
+}
+
+.friendListWrapper {
+  overflow-y: auto;
+  max-height: 87%;
+}

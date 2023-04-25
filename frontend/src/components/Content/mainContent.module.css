@@ -3,6 +3,7 @@
   font-display: column;
   height: 93vh;
   width: 100%;
+  position: sticky;
 }
 
 .aside {
