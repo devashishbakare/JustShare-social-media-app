@@ -6,9 +6,12 @@ body {
 .profilePageContainer {
   height: 98vh;
   width: 98vw;
-  /* border: 2px solid red; */
+  border: 2px solid red;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1%;
 }
 
 .navBar {
@@ -19,57 +22,82 @@ body {
   align-items: center;
   justify-content: center;
 }
-.profileContainer {
-  height: 90%;
-  width: 100%;
-  border: 1px solid black;
-  display: flex;
-}
-.profileAside {
-  border: 1px solid green;
-  height: 100%;
-  flex: 3;
-}
-.profileContent {
-  border: 1px solid red;
-  height: 100%;
-  flex: 8;
+
+.postContainer {
+  height: 91%;
+  width: 90%;
+  /* border: 1px solid black; */
+  -webkit-box-shadow: 0px 0px 16px -8px rgba(0, 0, 0, 0.68);
+  box-shadow: 0px 0px 16px -8px rgba(0, 0, 0, 0.68);
   display: flex;
   flex-direction: column;
   gap: 1%;
 }
 
-.profileDetailsContainer {
-  height: 25%;
+.userInfoContainer {
+  height: 35%;
   width: 100%;
+  /* border: 1px solid black; */
+  display: flex;
+  gap: 0.5%;
+  -webkit-box-shadow: 0px 0px 16px -8px rgba(0, 0, 0, 0.68);
+  box-shadow: 0px 0px 16px -8px rgba(0, 0, 0, 0.68);
+}
+
+.userFriendContainer {
+  height: 64%;
+  width: 100%;
+  /* border: 1px solid black; */
+}
+
+.userProfileImg {
+  height: 100%;
+  width: 30%;
+  border: 1px solid black;
+  /* border-radius: 50%; */
+}
+.userImage {
+  border-radius: 50%;
+  object-fit: cover;
+}
+.userFriendsDetails {
+  height: 100%;
+  width: 40%;
+  border: 1px solid black;
+}
+.userOtherDetails {
+  height: 100%;
+  width: 30%;
   border: 1px solid black;
 }
 
-.feedAndFriendWrapper {
-  height: 74%;
+.userPostContainer {
   width: 100%;
-  border: 1px solid green;
+  height: 100%;
+  /* border: 2px solid red; */
   display: flex;
-  flex-direction: row;
-  gap: 1%;
+  align-items: center;
+  justify-content: center;
+  -webkit-box-shadow: 0px 0px 16px -8px rgba(0, 0, 0, 0.68);
+  box-shadow: 0px 0px 16px -8px rgba(0, 0, 0, 0.68);
 }
 
-/*  <div className={style.profileFeedContainer}></div>
-    <div className={style.friendsContainer}></div> */
-
-.profileFeedContainer {
+.userPostInfoWrapper {
+  height: 100%;
+  width: 80%;
+  display: flex;
+  /* border: 1px solid black; */
+  gap: 1%;
+  -webkit-box-shadow: 0px 0px 16px -8px rgba(0, 0, 0, 0.68);
+  box-shadow: 0px 0px 16px -8px rgba(0, 0, 0, 0.68);
+}
+.userPosts {
   height: 100%;
   width: 64%;
-  border: 1px solid red;
+  /* border: 1px solid green; */
 }
-.friendsContainer {
+.userFriends {
   height: 100%;
   width: 35%;
-
-  border: 1px solid black;
-}
-
-.friendListWrapper {
-  overflow-y: auto;
-  max-height: 87%;
+  /* border: 1px solid red; */
 }

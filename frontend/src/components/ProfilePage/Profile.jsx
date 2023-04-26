@@ -16,123 +16,28 @@ const Profile = () => {
   const location = useLocation();
   const userId = location.state;
   console.log("userId " + userId);
-  const [bookmarks, setBookMarks] = useState([]);
-  const [isBookmarkClick, setIsBookmarkClick] = useState(false);
-  const [news, setNews] = useState([]);
-  const [isNewsClick, setIsNewsClick] = useState(false);
-  const [isCategoryClick, setIsCategoryClick] = useState(false);
   return (
     <>
       <div className={style.profilePageContainer}>
         <div className={style.navBar}>
           <NavBar />
         </div>
-        <div className={style.profileContainer}>
-          <div className={style.profileAside}>
-            <ContentContext.Provider
-              value={{
-                bookmarks,
-                setBookMarks,
-                isBookmarkClick,
-                setIsBookmarkClick,
-                news,
-                setNews,
-                isNewsClick,
-                setIsNewsClick,
-                setIsCategoryClick,
-              }}
-            >
-              <Aside />
-            </ContentContext.Provider>
+        <div className={style.postContainer}>
+          <div className={style.userInfoContainer}>
+            <div className={style.userProfileImg}>
+              {/* <img className={style.userImage} src={f1} alt="Profile Photo" /> */}
+            </div>
+            <div className={style.userFriendsDetails}></div>
+            <div className={style.userOtherDetails}></div>
           </div>
-          <div className={style.profileContent}>
-            <div className={style.profileDetailsContainer}></div>
-            <div className={style.feedAndFriendWrapper}>
-              <div className={style.profileFeedContainer}></div>
-              <div className={style.friendsContainer}>
-                <div className={friendCss.friendheadingWrapper}>
-                  <span className={friendCss.relatedFriendText}>Friends</span>
-                </div>
-                <div className={style.friendListWrapper}>
-                  <div className={friendCss.friendList}>
-                    <img
-                      src={f1}
-                      alt="friends_Img"
-                      className={friendCss.friendImg}
-                    />
-                    <span className={friendCss.friendName}>John Doe</span>
-                  </div>
-                  <div className={friendCss.friendList}>
-                    <img
-                      src={f2}
-                      alt="friends_Img"
-                      className={friendCss.friendImg}
-                    />
-                    <span className={friendCss.friendName}>Chris rollen</span>
-                  </div>
-                  <div className={friendCss.friendList}>
-                    <img
-                      src={f3}
-                      alt="friends_Img"
-                      className={friendCss.friendImg}
-                    />
-                    <span className={friendCss.friendName}>Moda wesber</span>
-                  </div>
-                  <div className={friendCss.friendList}>
-                    <img
-                      src={f1}
-                      alt="friends_Img"
-                      className={friendCss.friendImg}
-                    />
-                    <span className={friendCss.friendName}>John Doe</span>
-                  </div>
-                  <div className={friendCss.friendList}>
-                    <img
-                      src={f2}
-                      alt="friends_Img"
-                      className={friendCss.friendImg}
-                    />
-                    <span className={friendCss.friendName}>Chris rollen</span>
-                  </div>
-                  <div className={friendCss.friendList}>
-                    <img
-                      src={f3}
-                      alt="friends_Img"
-                      className={friendCss.friendImg}
-                    />
-                    <span className={friendCss.friendName}>Moda wesber</span>
-                  </div>
-                  <div className={friendCss.friendList}>
-                    <img
-                      src={f1}
-                      alt="friends_Img"
-                      className={friendCss.friendImg}
-                    />
-                    <span className={friendCss.friendName}>John Doe</span>
-                  </div>
-                  <div className={friendCss.friendList}>
-                    <img
-                      src={f2}
-                      alt="friends_Img"
-                      className={friendCss.friendImg}
-                    />
-                    <span className={friendCss.friendName}>Chris rollen</span>
-                  </div>
-                  <div className={friendCss.friendList}>
-                    <img
-                      src={f3}
-                      alt="friends_Img"
-                      className={friendCss.friendImg}
-                    />
-                    <span className={friendCss.friendName}>Moda wesber</span>
-                  </div>
-                </div>
-              </div>
+          <div className={style.userPostContainer}>
+            <div className={style.userPostInfoWrapper}>
+              <div className={style.userPosts}></div>
+              <div className={style.userFriends}></div>
             </div>
           </div>
         </div>
       </div>
-      ;
     </>
   );
 };
