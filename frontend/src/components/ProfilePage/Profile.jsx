@@ -25,9 +25,36 @@ const Profile = () => {
         <div className={style.postContainer}>
           <div className={style.userInfoContainer}>
             <div className={style.userProfileImg}>
-              {/* <img className={style.userImage} src={f1} alt="Profile Photo" /> */}
+              <div className={style.userImgWrapper}>
+                <img className={style.userImage} src={f1} alt="Profile Photo" />
+              </div>
             </div>
-            <div className={style.userFriendsDetails}></div>
+            <div className={style.userFriendsDetails}>
+              <div className={style.userFriendsDetailsHeading}>
+                <div className={style.userNameWrapper}>
+                  <span className={style.userNameText}>John Doe</span>
+                </div>
+                <div className={style.editProfileWrapper}>
+                  <button className={style.editProfieButton}>
+                    Edit Profile
+                  </button>
+                </div>
+              </div>
+              <div className={style.userAndconnectionsInfo}>
+                <div className={style.userPostCount}>
+                  <span className={style.countHeading}>Posts</span>
+                  <span className={style.infoCount}>05</span>
+                </div>
+                <div className={style.userFollowingCount}>
+                  <span className={style.countHeading}>Following</span>
+                  <span className={style.infoCount}>12</span>
+                </div>
+                <div className={style.userFollwersCount}>
+                  <span className={style.countHeading}>Followers</span>
+                  <span className={style.infoCount}>15</span>
+                </div>
+              </div>
+            </div>
             <div className={style.userOtherDetails}></div>
           </div>
           <div className={style.userPostContainer}>
