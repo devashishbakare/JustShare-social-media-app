@@ -9,6 +9,7 @@ router.get("/get/:id", postController.fetchPost);
 router.get("/timeline", postController.getTimeline);
 router.put("/like", postController.like);
 router.get("/comments/:id", postController.getComments);
+router.get("/userPosts/:id", postController.fetchUserPost);
 router.use("/comment", require("./comment"));
 
 module.exports = router;

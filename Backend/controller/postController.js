@@ -150,6 +150,22 @@ const getComments = async (req, res) => {
   }
 };
 
+const fetchUserPost = async (req, res) => {
+  let userId = req.params.id;
+
+  const user = await User.findById(userId);
+  if (!user) {
+    return res.status(404).json("user not found");
+  }
+
+  const data = await Promise.all(
+    user.posts.map((postId) => {
+      return Post.findById(postId);
+    })
+  );
+  return res.status(200).json(data);
+};
+
 module.exports = {
   postHome,
   createPost,
@@ -159,4 +175,5 @@ module.exports = {
   getTimeline,
   like,
   getComments,
+  fetchUserPost,
 };
