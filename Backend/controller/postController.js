@@ -19,6 +19,10 @@ const createPost = async (req, res) => {
     let newPost = new Post(req.body);
     await newPost.save();
 
+    await user.updateOne({
+      $push: { posts: newPost._id },
+    });
+
     return res.status(200).json(newPost);
   } catch (err) {
     console.error(err);
@@ -51,9 +55,17 @@ const deletePost = async (req, res) => {
   let postId = req.params.id;
   try {
     let post = await Post.findByIdAndDelete({ _id: postId });
+    let userId = post.userId;
+    let user = await User.findById(userId);
+
+    await user.updateOne({
+      $pull: { posts: post._id },
+    });
+
     if (!post) {
       return res.status(404).json("Post Not Found");
     }
+
     return res.status(200).json(post);
   } catch (err) {
     console.error(err);
