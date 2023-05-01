@@ -8,4 +8,5 @@ router.put("/follow/:id", userController.followUser);
 router.put("/unfollow/:id", userController.unfollowUser);
 router.post("/bookmark", userController.bookmarkPost);
 router.get("/bookmarkPosts/:id", userController.getBookmarkPost);
+router.get("/searchUser", userController.getUserFromSearch);
 module.exports = router;

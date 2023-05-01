@@ -161,6 +161,24 @@ const getBookmarkPost = async (req, res) => {
   }
 };
 
+const getUserFromSearch = async (req, res) => {
+  let keyword = req.query.search;
+
+  const seachCriteria = keyword
+    ? {
+        $or: [
+          { userName: { $regex: `${keyword}`, $options: "i" } },
+          // { email: { $regex: keyword, $options: "i" } },
+        ],
+      }
+    : {
+        //todo : Throw proper error here
+      };
+
+  const allUsers = await User.find(seachCriteria);
+  return res.status(200).json(allUsers);
+};
+
 module.exports = {
   updateUser,
   deleteUser,
@@ -169,4 +187,5 @@ module.exports = {
   unfollowUser,
   bookmarkPost,
   getBookmarkPost,
+  getUserFromSearch,
 };

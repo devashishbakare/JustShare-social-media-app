@@ -1,15 +1,19 @@
 import React from "react";
 import style from "./navbar.module.css";
 import { FaSearch, FaRegBell, FaRocketchat } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 const Navbar = () => {
   const userDetails = localStorage.getItem("user");
   const user = JSON.parse(userDetails);
   const userProfilePhoto = user.profilePicture;
+  const navigate = useNavigate();
   return (
     <>
       <div className={style.navbarContainer}>
         <div className={style.navLeft}>
-          <div className={style.navHeading}>Justshare</div>
+          <div className={style.navHeading} onClick={() => navigate("/home")}>
+            Justshare
+          </div>
         </div>
 
         <div className={style.navMiddle}>
@@ -24,7 +28,12 @@ const Navbar = () => {
 
         <div className={style.navRight}>
           <div className={style.navRightText}>
-            <span className={style.navRightButton}>HomePage</span>
+            <span
+              className={style.navRightButton}
+              onClick={() => navigate("/home")}
+            >
+              HomePage
+            </span>
             <span className={style.navRightButton}>Timeline</span>
           </div>
 
