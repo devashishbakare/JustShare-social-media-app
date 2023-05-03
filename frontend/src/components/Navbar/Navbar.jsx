@@ -51,7 +51,11 @@ const Navbar = React.memo(() => {
           {displySearchResult && (
             <div className={style.seachResultWrapper}>
               {searchResult.map((user) => (
-                <span key={user._id} className={style.seachResultValue}>
+                <span
+                  key={user._id}
+                  className={style.seachResultValue}
+                  onClick={() => navigate("/profile", { state: user._id })}
+                >
                   {user.userName}
                 </span>
               ))}

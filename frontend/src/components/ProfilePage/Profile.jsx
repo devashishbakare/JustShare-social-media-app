@@ -14,9 +14,14 @@ const Profile = () => {
   const userId = location.state;
   console.log("userId " + userId);
 
+  const storedUserDetails = localStorage.getItem("user");
+  const user = JSON.parse(storedUserDetails);
+  const loggedInUserId = user._id;
+
   const [userDetails, setUserDetails] = useState([]);
   const [userPosts, setUserPosts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [showEditButton, setShowEditButton] = useState(false);
 
   useEffect(() => {
     const getUserDetails = async () => {
@@ -38,6 +43,9 @@ const Profile = () => {
         // console.log(userResponse.data);
         console.log("Post data", postResponse.data);
         console.log("User data", userResponse.data);
+        if (loggedInUserId === userId) {
+          setShowEditButton(true);
+        }
         setUserDetails(userResponse.data);
         setUserPosts(postResponse.data);
         setIsLoading(false);
@@ -72,16 +80,23 @@ const Profile = () => {
               <div className={style.userFriendsDetails}>
                 <div className={style.userFriendsDetailsHeading}>
                   <div className={style.userNameWrapper}>
-                    <span className={style.userNameText}>John Doe</span>
+                    <span className={style.userNameText}>
+                      {userDetails.userName}
+                    </span>
                   </div>
-                  <div className={style.FollowRequestWrapper}>
-                    <button className={style.followButton}>Follow</button>
-                  </div>
-                  <div className={style.editProfileWrapper}>
-                    <button className={style.editProfieButton}>
-                      Edit Profile
-                    </button>
-                  </div>
+                  {!showEditButton && (
+                    <div className={style.FollowRequestWrapper}>
+                      <button className={style.followButton}>Follow</button>
+                    </div>
+                  )}
+
+                  {showEditButton && (
+                    <div className={style.editProfileWrapper}>
+                      <button className={style.editProfieButton}>
+                        Edit Profile
+                      </button>
+                    </div>
+                  )}
                 </div>
                 <div className={style.dividerContainer}>
                   <hr className={style.userInfoDivider} />

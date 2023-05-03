@@ -14,6 +14,8 @@
   max-height: 850px;
   overflow-y: scroll;
   padding: 0%;
+  /* position: relative;
+  z-index: 4; */
   /* margin-left: 3%; */
 }
 .uploadPostContainer {
