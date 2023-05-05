@@ -22,7 +22,9 @@ const Profile = () => {
   const [userPosts, setUserPosts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showEditButton, setShowEditButton] = useState(false);
-
+  const [folloStatus, setFollowStatus] = useState("Follow");
+  const [followersCount, setFollowersCount] = useState(0);
+  const [followingsCount, setFollowingsCount] = useState(0);
   useEffect(() => {
     const getUserDetails = async () => {
       try {
@@ -43,11 +45,18 @@ const Profile = () => {
         // console.log(userResponse.data);
         console.log("Post data", postResponse.data);
         console.log("User data", userResponse.data);
-        if (loggedInUserId === userId) {
-          setShowEditButton(true);
+
+        if (userId !== loggedInUserId) {
+          if (userResponse.data.followers.includes(loggedInUserId)) {
+            setFollowStatus("Unfollow");
+          } else {
+            setFollowStatus("Follow");
+          }
         }
         setUserDetails(userResponse.data);
         setUserPosts(postResponse.data);
+        setFollowersCount(userResponse.data.followers.length);
+        setFollowingsCount(userResponse.data.followings.length);
         setIsLoading(false);
       } catch (error) {
         console.error("Eroor while fetchin user Details", error);
@@ -55,7 +64,63 @@ const Profile = () => {
     };
 
     getUserDetails();
-  }, []);
+  }, [userId]);
+
+  const handleFollowRequest = async () => {
+    if (userId === loggedInUserId) {
+      console.error("user can not follow himself");
+    } else {
+      try {
+        if (folloStatus === "Follow") {
+          const config = {
+            headers: {
+              "Config-Type": "application/json",
+            },
+          };
+          const data = {
+            requestingUser: loggedInUserId,
+            requestedUser: userId,
+          };
+          const response = await axios.put(
+            `${baseUrl}/user/follow`,
+            data,
+            config
+          );
+          if (response.status === 200) {
+            console.log("Followed");
+            setFollowersCount(followersCount + 1);
+            setFollowStatus("Unfollow");
+          } else {
+            //todo : toast a notification for followed successfully
+          }
+        } else {
+          const config = {
+            headers: {
+              "Config-Type": "application/json",
+            },
+          };
+          const data = {
+            requestingUser: loggedInUserId,
+            requestingUser: userId,
+          };
+          const response = await axios.put(
+            `${baseUrl}/user/unfollow`,
+            data,
+            config
+          );
+          if (response.status === 200) {
+            console.log("Unfollowed");
+            setFollowingsCount(followingsCount - 1);
+            setFollowStatus("Follow");
+          } else {
+            //todo : toast a notification for unfollow succesfully
+          }
+        }
+      } catch (error) {
+        console.error("Error in follow Request");
+      }
+    }
+  };
 
   return (
     <>
@@ -84,13 +149,18 @@ const Profile = () => {
                       {userDetails.userName}
                     </span>
                   </div>
-                  {!showEditButton && (
+                  {loggedInUserId !== userId && (
                     <div className={style.FollowRequestWrapper}>
-                      <button className={style.followButton}>Follow</button>
+                      <button
+                        className={style.followButton}
+                        onClick={handleFollowRequest}
+                      >
+                        {folloStatus}
+                      </button>
                     </div>
                   )}
 
-                  {showEditButton && (
+                  {loggedInUserId == userId && (
                     <div className={style.editProfileWrapper}>
                       <button className={style.editProfieButton}>
                         Edit Profile
@@ -109,15 +179,11 @@ const Profile = () => {
                   </div>
                   <div className={style.userFollowingCount}>
                     <span className={style.countHeading}>Following</span>
-                    <span className={style.infoCount}>
-                      {userDetails.followings.length}
-                    </span>
+                    <span className={style.infoCount}>{followingsCount}</span>
                   </div>
                   <div className={style.userFollwersCount}>
                     <span className={style.countHeading}>Followers</span>
-                    <span className={style.infoCount}>
-                      {userDetails.followers.length}
-                    </span>
+                    <span className={style.infoCount}>{followersCount}</span>
                   </div>
                 </div>
               </div>
