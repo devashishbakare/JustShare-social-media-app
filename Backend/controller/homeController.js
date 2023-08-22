@@ -17,6 +17,10 @@ const registerUser = async (req, res) => {
   if (password !== confirmPassword) {
     return res.status(500).json("check password and confirm password again");
   }
+  let userExist = await User.findOne({ email });
+  if (userExist) {
+    return res.status(500).json("user already exist");
+  }
   try {
     const saltRounds = 10;
     const salt = bcrypt.genSaltSync(saltRounds);

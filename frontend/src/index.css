@@ -1,0 +1,9 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.centerDiv {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
