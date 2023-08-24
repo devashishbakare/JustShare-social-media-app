@@ -80,8 +80,18 @@ const fetchPost = async (req, res) => {
 
   try {
     let post = await Post.findById(postId).select("-updatedAt");
+
+    const comments = [];
+
+    await Promise.all(
+      post.comment.map(async (singleComment) => {
+        const commentData = await Comment.findById(singleComment);
+        comments.push(commentData);
+      })
+    );
+
     if (!post) return res.status(404).json("post not found");
-    return res.status(200).json(post);
+    return res.status(200).json({ post, comments });
   } catch (err) {
     console.error(err);
     return res.status(500).json("Error while fetching post");
