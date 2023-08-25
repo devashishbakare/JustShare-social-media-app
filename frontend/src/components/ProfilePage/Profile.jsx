@@ -1,8 +1,13 @@
 import React from "react";
 import { useLocation } from "react-router-dom";
 import { DiJavascript1 } from "react-icons/di";
-import { AiOutlineSearch, AiFillBell, AiFillCloseCircle } from "react-icons/ai";
-import { FcGrid, FcPrevious } from "react-icons/fc";
+import {
+  AiOutlineSearch,
+  AiFillBell,
+  AiFillCloseCircle,
+  AiOutlineHeart,
+} from "react-icons/ai";
+import { FcGrid, FcPrevious, FcLike } from "react-icons/fc";
 import { FaRocketchat, FaRegNewspaper, FaBookmark } from "react-icons/fa";
 import { BsBookmarkHeartFill } from "react-icons/bs";
 import { FcBookmark } from "react-icons/fc";
@@ -13,6 +18,7 @@ import axios from "axios";
 import { baseUrl } from "../constants";
 import Post from "../Post/Post";
 import Spinners from "../Spinners";
+import CirculareSpinner from "../CirculareSpinner";
 const Profile = () => {
   //visiters userId details
   const location = useLocation();
@@ -35,6 +41,9 @@ const Profile = () => {
   const [followersCount, setFollowersCount] = useState(0);
   const [followingsCount, setFollowingsCount] = useState(0);
   const [bookmarkStatus, setBookmarkStatus] = useState(false);
+  const [bookmarkLoader, setBookmarkLoader] = useState(false);
+  const [postLikedBefore, setPostLikedBefore] = useState(false);
+  const [postLikeCount, setPostLikeCount] = useState(0);
   useEffect(() => {
     const getUserDetails = async () => {
       try {
@@ -147,6 +156,13 @@ const Profile = () => {
           postResponse.data.post._id
         );
         setBookmarkStatus(isBookmark);
+        const isLikedBefore = await postResponse.data.post.like.includes(
+          loggedInUserId
+        );
+        if (isLikedBefore) {
+          setPostLikedBefore(true);
+        }
+        setPostLikeCount(postResponse.data.post.like.length);
         setPostDetails(postResponse.data);
         console.log("postDetails is here" + postResponse.data);
         setShowPost(true);
@@ -165,6 +181,121 @@ const Profile = () => {
       });
     } finally {
       setPostLoading(false);
+    }
+  };
+
+  const updateBookmarkStatus = async (currBookmarkStatus, postId, userId) => {
+    try {
+      setBookmarkLoader(true);
+      if (currBookmarkStatus === false) {
+        const config = {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        };
+        const requestPostInfo = {
+          userId,
+          postId,
+        };
+        const response = await axios.post(
+          `${baseUrl}/user/bookmark`,
+          requestPostInfo,
+          config
+        );
+
+        if (response.status === 200) {
+          setBookmarkStatus(true);
+          toast.success("Added To Bookmark List", {
+            position: toast.POSITION.TOP_CENTER,
+            autoClose: 3000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "dark",
+          });
+        }
+      } else {
+        const config = {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        };
+        const requestPostInfo = {
+          userId,
+          postId,
+        };
+        const response = await axios.post(
+          `${baseUrl}/user/removeBookmark`,
+          requestPostInfo,
+          config
+        );
+
+        if (response.status === 200) {
+          console.log(response.data);
+          toast.success("Removed From Bookmark List", {
+            position: toast.POSITION.TOP_CENTER,
+            autoClose: 3000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "dark",
+          });
+          setBookmarkStatus(false);
+        }
+      }
+    } catch (error) {
+      toast.success("Something went wrong, try again later", {
+        position: toast.POSITION.TOP_CENTER,
+        autoClose: 3000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
+    } finally {
+      setBookmarkLoader(false);
+    }
+  };
+
+  const handleLikeUpdate = async (postId, userId) => {
+    try {
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      };
+      const info = {
+        userId,
+        postId,
+      };
+      const response = await axios.put(`${baseUrl}/post/like`, info, config);
+
+      if (response.status === 200) {
+        if (response.data.like === true) {
+          setPostLikeCount(postLikeCount + 1);
+          setPostLikedBefore(true);
+        } else {
+          setPostLikeCount(postLikeCount - 1);
+          setPostLikedBefore(false);
+        }
+      }
+    } catch (error) {
+      toast.success("Something went wrong, try again later", {
+        position: toast.POSITION.TOP_CENTER,
+        autoClose: 3000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
     }
   };
 
@@ -351,7 +482,7 @@ const Profile = () => {
           {showPost && (
             <>
               <div className="absolute  h-[400px] w-[650px] top-[30%] left-[15%] border-2 bg-black flex gap-1">
-                <div className="h-full] w-[45%] centerDiv border-2">
+                <div className="h-full] w-[45%] centerDiv">
                   <img
                     src={postDetails.post.image}
                     alt="postImage"
@@ -359,7 +490,7 @@ const Profile = () => {
                   />
                 </div>
                 <div className="h-full] w-[55%] centerDiv border-2 flex-col">
-                  <div className="h-[6%] min-h-[55px] w-full border-2 text-[#f5f5f5] flex items-center justify-between">
+                  <div className="h-[6%] min-h-[55px] w-full text-[#f5f5f5] flex items-center justify-between">
                     <span className="pl-3 h-full w-[80%] flex items-center">
                       {userDetails.userName}
                     </span>
@@ -373,23 +504,82 @@ const Profile = () => {
                   <div className="h-[70%] min-h-[63px] w-full border-2 text-[#f5f5f5] flex items-center pl-3">
                     {userDetails.userName}
                   </div>
-                  <div className="h-[15%] min-h-[55px] w-full flex border-2 gap-1">
-                    <span className="h-full w-[80%] flex items-center text-white border-2">
-                      14 people like this post
-                    </span>
-                    <span className="h-full w-[20%] centerDiv border-2">
-                      {bookmarkStatus ? (
+                  <div className="h-[15%] min-h-[55px] w-full flex gap-1">
+                    <span className="h-full w-[80%] flex items-center text-white pl-2">
+                      {postLikedBefore ? (
                         <>
-                          <FcBookmark className="text-[1.5rem]" />
+                          <FcLike
+                            className="text-[1.5rem]"
+                            onClick={() =>
+                              handleLikeUpdate(
+                                postDetails.post._id,
+                                loggedInUserId
+                              )
+                            }
+                          />
                         </>
                       ) : (
                         <>
-                          <img
-                            src="https://www.linkpicture.com/q/bg-removebg-preview.jpg"
-                            alt="bookmarkImage"
-                            className="h-[35px] w-[35px] object-cover rounded-[50%]"
-                            // onClick={}
+                          <AiOutlineHeart
+                            className="text-[1.5rem]"
+                            onClick={() =>
+                              handleLikeUpdate(
+                                postDetails.post._id,
+                                loggedInUserId
+                              )
+                            }
                           />
+                        </>
+                      )}
+                      {postLikeCount == 0 ? (
+                        <> &nbsp;Be the first person to like</>
+                      ) : (
+                        <>
+                          &nbsp;
+                          {postLikeCount} &nbsp; people liked this post
+                        </>
+                      )}
+                    </span>
+                    <span className="h-full w-[20%] centerDiv">
+                      {bookmarkLoader ? (
+                        <>
+                          <span className="h-full w-full centerDiv">
+                            <CirculareSpinner />
+                          </span>
+                        </>
+                      ) : (
+                        <>
+                          {bookmarkStatus ? (
+                            <>
+                              <span
+                                className="h-full w-full centerDiv"
+                                onClick={() =>
+                                  updateBookmarkStatus(
+                                    true,
+                                    postDetails.post._id,
+                                    loggedInUserId
+                                  )
+                                }
+                              >
+                                <FcBookmark className="text-[1.5rem]" />
+                              </span>
+                            </>
+                          ) : (
+                            <>
+                              <img
+                                src="https://www.linkpicture.com/q/bg-removebg-preview.jpg"
+                                alt="bookmarkImage"
+                                className="h-[35px] w-[35px] object-cover rounded-[50%]"
+                                onClick={() =>
+                                  updateBookmarkStatus(
+                                    false,
+                                    postDetails.post._id,
+                                    loggedInUserId
+                                  )
+                                }
+                              />
+                            </>
+                          )}
                         </>
                       )}
                     </span>

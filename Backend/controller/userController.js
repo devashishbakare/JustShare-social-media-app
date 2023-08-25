@@ -179,6 +179,29 @@ const getUserFromSearch = async (req, res) => {
   return res.status(200).json(allUsers);
 };
 
+const deleteFromBookmarkList = async (req, res) => {
+  try {
+    const { userId, postId } = req.body;
+
+    const user = await User.findById(userId);
+    const post = await Post.findById(postId);
+
+    if (!user || !post) {
+      return res.status(404).json("user or post not found");
+    }
+    if (user.bookmark.includes(postId) === false) {
+      return res.status(404).json("This post are not bookmarked");
+    }
+    const updatedStatus = await user.updateOne({
+      $pull: { bookmark: postId },
+    });
+
+    return res.status(200).json(updatedStatus);
+  } catch (error) {
+    return res.status(500).json("something went wrong");
+  }
+};
+
 module.exports = {
   updateUser,
   deleteUser,
@@ -188,4 +211,5 @@ module.exports = {
   bookmarkPost,
   getBookmarkPost,
   getUserFromSearch,
+  deleteFromBookmarkList,
 };

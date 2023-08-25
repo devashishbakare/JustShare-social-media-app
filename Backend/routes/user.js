@@ -7,6 +7,7 @@ router.get("/getUser/:id", userController.fetchUser);
 router.put("/follow", userController.followUser);
 router.put("/unfollow", userController.unfollowUser);
 router.post("/bookmark", userController.bookmarkPost);
+router.post("/removeBookmark", userController.deleteFromBookmarkList);
 router.get("/bookmarkPosts/:id", userController.getBookmarkPost);
 router.get("/searchUser", userController.getUserFromSearch);
 module.exports = router;
