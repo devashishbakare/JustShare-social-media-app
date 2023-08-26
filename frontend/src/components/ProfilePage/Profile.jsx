@@ -451,7 +451,7 @@ const Profile = () => {
               </div>
             </div>
 
-            <div className="hidden md:flex h-auto w-full border-2 flex-wrap gap-1 centerDiv relative">
+            <div className="hidden md:flex h-auto w-full border-2 flex-wrap gap-1 centerDiv relative p-5">
               {!postLoading ? (
                 <>
                   {userPosts.map((post) => (
@@ -501,8 +501,45 @@ const Profile = () => {
                       <AiFillCloseCircle className="text-[1.4rem]" />
                     </span>
                   </div>
-                  <div className="h-[70%] min-h-[63px] w-full border-2 text-[#f5f5f5] flex items-center pl-3">
-                    {userDetails.userName}
+                  <div className="h-[70%] min-h-[63px] w-full border-2 text-[#f5f5f5] flex items-center pl-1 overflow-y-scroll flex-col">
+                    {postDetails.comments.map((comment) => (
+                      <>
+                        <div className="h-auto w-full flex gap-1 mt-1 mb-1">
+                          <div className="h-[30px] w-[30px] flex justify-center mt-2">
+                            <img
+                              src={comment.commenterProfilePicture}
+                              alt="profilePicture"
+                              className="h-full w-full rounded-[50%] object-cover"
+                            />
+                          </div>
+                          <div className="h-auto w-[75%] flex p-2 flex-col">
+                            <span className="text-[0.8rem]">
+                              <span className="font-semibold">
+                                {comment.commenterName}
+                              </span>{" "}
+                              &nbsp; {comment.text}
+                            </span>
+                            <span className="text-[0.7rem] mt-1">
+                              {comment.like.length}&nbsp;likes&nbsp;
+                              <span className="ml-1 mr-1 cursor-pointer">
+                                Reply
+                              </span>
+                            </span>
+                            {comment.reply.length > 0 && (
+                              <>
+                                <span className="text-[0.7rem] mt-2 cursor-pointer">
+                                  ---- &nbsp; View replies(
+                                  {comment.reply.length})
+                                </span>
+                              </>
+                            )}
+                          </div>
+                          <div className="h-auto w-[10%] flex justify-center mt-4">
+                            <FcLike className="text-[0.9rem]" />
+                          </div>
+                        </div>
+                      </>
+                    ))}
                   </div>
                   <div className="h-[15%] min-h-[55px] w-full flex gap-1">
                     <span className="h-full w-[80%] flex items-center text-white pl-2">
@@ -532,11 +569,20 @@ const Profile = () => {
                         </>
                       )}
                       {postLikeCount == 0 ? (
-                        <> &nbsp;Be the first person to like</>
+                        <>
+                          {" "}
+                          &nbsp;&nbsp;
+                          <span className="text-[0.8rem]">
+                            Be the first person to like this post
+                          </span>
+                        </>
                       ) : (
                         <>
                           &nbsp;
-                          {postLikeCount} &nbsp; people liked this post
+                          {postLikeCount} &nbsp;{" "}
+                          <span className="text-[0.8rem]">
+                            people liked this post
+                          </span>
                         </>
                       )}
                     </span>
