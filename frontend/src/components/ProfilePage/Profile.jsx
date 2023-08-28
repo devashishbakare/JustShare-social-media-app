@@ -19,6 +19,7 @@ import { baseUrl } from "../constants";
 import Post from "../Post/Post";
 import Spinners from "../Spinners";
 import CirculareSpinner from "../CirculareSpinner";
+import { Comment } from "../Comments/Comment";
 const Profile = () => {
   //visiters userId details
   const location = useLocation();
@@ -36,7 +37,6 @@ const Profile = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [postDetails, setPostDetails] = useState({});
   const [showPost, setShowPost] = useState(false);
-  const [showEditButton, setShowEditButton] = useState(false);
   const [followStatus, setFollowStatus] = useState("Follow");
   const [followersCount, setFollowersCount] = useState(0);
   const [followingsCount, setFollowingsCount] = useState(0);
@@ -44,6 +44,8 @@ const Profile = () => {
   const [bookmarkLoader, setBookmarkLoader] = useState(false);
   const [postLikedBefore, setPostLikedBefore] = useState(false);
   const [postLikeCount, setPostLikeCount] = useState(0);
+  //use this state for replying user
+  const [isUserReplying, setIsUserReplying] = useState(false);
   useEffect(() => {
     const getUserDetails = async () => {
       try {
@@ -84,6 +86,54 @@ const Profile = () => {
 
     getUserDetails();
   }, [userId]);
+
+  const deleteComment = async (deletionRequest, commentId, deleteFrom) => {
+    try {
+      if (deletionRequest === "comment") {
+        const config = {
+          headers: {
+            "Config-Type": "application/json",
+          },
+          data: { postId: deleteFrom, commentId },
+        };
+        const deleteResponse = await axios.delete(
+          `${baseUrl}/comment/delete`,
+          config
+        );
+
+        if (deleteResponse.status === 200) {
+          return true;
+        }
+      } else {
+        const config = {
+          headers: {
+            "Config-Type": "application/json",
+          },
+          data: { commentId: deleteFrom, replyId: commentId },
+        };
+        const deleteResponse = await axios.delete(
+          `${baseUrl}/comment/deletReply}`,
+          config
+        );
+
+        if (deleteResponse.status === 200) {
+          return true;
+        }
+      }
+    } catch (error) {
+      toast.error("Something went wrong, Try again later", {
+        position: toast.POSITION.TOP_CENTER,
+        autoClose: 3000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
+      return false;
+    }
+  };
 
   const handleFollowRequest = async () => {
     if (userId === loggedInUserId) {
@@ -481,7 +531,7 @@ const Profile = () => {
           </div>
           {showPost && (
             <>
-              <div className="absolute  h-[400px] w-[650px] top-[30%] left-[15%] border-2 bg-black flex gap-1">
+              <div className="centerPostModal h-[400px] w-[650px] border-2 bg-black flex gap-1">
                 <div className="h-full] w-[45%] centerDiv">
                   <img
                     src={postDetails.post.image}
@@ -502,44 +552,26 @@ const Profile = () => {
                     </span>
                   </div>
                   <div className="h-[70%] min-h-[63px] w-full border-2 text-[#f5f5f5] flex items-center pl-1 overflow-y-scroll flex-col">
-                    {postDetails.comments.map((comment) => (
+                    {postDetails.length > 0 ? (
                       <>
-                        <div className="h-auto w-full flex gap-1 mt-1 mb-1">
-                          <div className="h-[30px] w-[30px] flex justify-center mt-2">
-                            <img
-                              src={comment.commenterProfilePicture}
-                              alt="profilePicture"
-                              className="h-full w-full rounded-[50%] object-cover"
+                        {" "}
+                        {postDetails.comments.map((comment) => (
+                          <>
+                            <Comment
+                              comment={comment}
+                              key={comment._id}
+                              deleteRequest={deleteComment}
                             />
-                          </div>
-                          <div className="h-auto w-[75%] flex p-2 flex-col">
-                            <span className="text-[0.8rem]">
-                              <span className="font-semibold">
-                                {comment.commenterName}
-                              </span>{" "}
-                              &nbsp; {comment.text}
-                            </span>
-                            <span className="text-[0.7rem] mt-1">
-                              {comment.like.length}&nbsp;likes&nbsp;
-                              <span className="ml-1 mr-1 cursor-pointer">
-                                Reply
-                              </span>
-                            </span>
-                            {comment.reply.length > 0 && (
-                              <>
-                                <span className="text-[0.7rem] mt-2 cursor-pointer">
-                                  ---- &nbsp; View replies(
-                                  {comment.reply.length})
-                                </span>
-                              </>
-                            )}
-                          </div>
-                          <div className="h-auto w-[10%] flex justify-center mt-4">
-                            <FcLike className="text-[0.9rem]" />
-                          </div>
+                          </>
+                        ))}
+                      </>
+                    ) : (
+                      <>
+                        <div className="h-full w-full centerDiv text-[1rem] text-[#f5f5f5] opacity-50">
+                          Be the first person to add comment !!
                         </div>
                       </>
-                    ))}
+                    )}
                   </div>
                   <div className="h-[15%] min-h-[55px] w-full flex gap-1">
                     <span className="h-full w-[80%] flex items-center text-white pl-2">
@@ -572,7 +604,7 @@ const Profile = () => {
                         <>
                           {" "}
                           &nbsp;&nbsp;
-                          <span className="text-[0.8rem]">
+                          <span className="text-[0.8rem] opacity-50">
                             Be the first person to like this post
                           </span>
                         </>
@@ -580,7 +612,7 @@ const Profile = () => {
                         <>
                           &nbsp;
                           {postLikeCount} &nbsp;{" "}
-                          <span className="text-[0.8rem]">
+                          <span className="text-[0.8rem] opacity-70">
                             people liked this post
                           </span>
                         </>

@@ -1,6 +1,7 @@
 const Post = require("../models/Post");
 const User = require("../models/User");
 const Comment = require("../models/Comment");
+const { all } = require("../routes");
 const createComment = async (req, res) => {
   let postId = req.body.postId;
   let userId = req.body.userId;
@@ -213,6 +214,47 @@ const commentLike = async (req, res) => {
   }
 };
 
+const deleteReplyComment = async (req, res) => {
+  // data: { commentId: deleteFrom, replyId: commentId }
+  try {
+    const { commentId, replyId } = req.body;
+    console.log(commentId + " data " + replyId);
+
+    const deletedReply = await Comment.findByIdAndUpdate(
+      { id: commentId },
+      {
+        $pull: { reply: replyId },
+      }
+    );
+
+    if (deletedReply) {
+      const findReply = await Comment.findByIdAndDelete(replyId);
+      if (findReply) {
+        return res.status(200).json(true);
+      }
+    }
+  } catch (error) {
+    return res.status(500).json("something went wrong");
+  }
+};
+
+const deleteAllReply = async (req, res) => {
+  try {
+    const allComment = await Comment.deleteMany({});
+
+    // await Promise.all(
+    //   allComment.map(async (comment) => {
+    //     await comment.updateOne({
+    //       $set: { reply: [] },
+    //     });
+    //   })
+    // );
+    return res.status(200).json("deleted All");
+  } catch (error) {
+    return res.status(500).json("something went wrong");
+  }
+};
+
 module.exports = {
   createComment,
   updateComment,
@@ -221,4 +263,6 @@ module.exports = {
   getCommentReply,
   getPostComment,
   commentLike,
+  deleteReplyComment,
+  deleteAllReply,
 };
