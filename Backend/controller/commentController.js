@@ -1,10 +1,9 @@
 const Post = require("../models/Post");
 const User = require("../models/User");
 const Comment = require("../models/Comment");
-const { all } = require("../routes");
+
 const createComment = async (req, res) => {
-  let postId = req.body.postId;
-  let userId = req.body.userId;
+  const { userId, postId, newComment } = req.body;
 
   console.log(`uid -> ${userId} pid -> ${postId}`);
   try {
@@ -14,7 +13,7 @@ const createComment = async (req, res) => {
     let comment = new Comment({
       postId: postId,
       userId: userId,
-      text: req.body.text,
+      text: newComment,
       commenterName: user.userName,
       commenterProfilePicture: user.profilePicture,
     });
@@ -240,11 +239,19 @@ const deleteReplyComment = async (req, res) => {
 
 const deleteAllReply = async (req, res) => {
   try {
-    const allComment = await Comment.deleteMany({});
+    const allPost = await Post.find({});
+
+    await Promise.all(
+      allPost.map(async (post) => {
+        await post.updateOne({
+          $set: { comment: [] },
+        });
+      })
+    );
 
     // await Promise.all(
-    //   allComment.map(async (comment) => {
-    //     await comment.updateOne({
+    //   allPost.map(async (post) => {
+    //     await post.comment({
     //       $set: { reply: [] },
     //     });
     //   })

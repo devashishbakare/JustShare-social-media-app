@@ -36,6 +36,7 @@ const Profile = () => {
   const [userPosts, setUserPosts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [postDetails, setPostDetails] = useState({});
+  const [postComments, setPostComments] = useState([]);
   const [showPost, setShowPost] = useState(false);
   const [followStatus, setFollowStatus] = useState("Follow");
   const [followersCount, setFollowersCount] = useState(0);
@@ -46,6 +47,8 @@ const Profile = () => {
   const [postLikeCount, setPostLikeCount] = useState(0);
   //use this state for replying user
   const [isUserReplying, setIsUserReplying] = useState(false);
+  const [userComment, setUserComment] = useState("");
+  const [replyingTo, setReplyingTo] = useState("");
   useEffect(() => {
     const getUserDetails = async () => {
       try {
@@ -212,9 +215,11 @@ const Profile = () => {
         if (isLikedBefore) {
           setPostLikedBefore(true);
         }
+        console.log("postDetails is here" + postResponse.data.post._id);
         setPostLikeCount(postResponse.data.post.like.length);
-        setPostDetails(postResponse.data);
-        console.log("postDetails is here" + postResponse.data);
+        setPostDetails(postResponse.data.post);
+        setPostComments(postResponse.data.comments);
+
         setShowPost(true);
       }
     } catch (error) {
@@ -298,7 +303,7 @@ const Profile = () => {
         }
       }
     } catch (error) {
-      toast.success("Something went wrong, try again later", {
+      toast.error("Something went wrong, try again later", {
         position: toast.POSITION.TOP_CENTER,
         autoClose: 3000,
         hideProgressBar: true,
@@ -346,6 +351,75 @@ const Profile = () => {
         progress: undefined,
         theme: "dark",
       });
+    }
+  };
+
+  const handlePostComment = async (postId) => {
+    try {
+      setPostLoading(true);
+      console.log("test" + userComment);
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      };
+      const data = {
+        userId,
+        postId,
+        newComment: userComment,
+      };
+      const response = await axios.post(
+        `${baseUrl}/comment/create`,
+        data,
+        config
+      );
+      if (response.status === 200) {
+        const newComment = response.data.data;
+        const updatedComments = [newComment, ...postComments];
+        setUserComment("");
+        setPostComments(updatedComments);
+        //we have done this
+        toast.success("Comment has been added..!", {
+          position: toast.POSITION.TOP_CENTER,
+          autoClose: 3000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
+      }
+    } catch (error) {
+      toast.error("Something went wrong, try again later", {
+        position: toast.POSITION.TOP_CENTER,
+        autoClose: 3000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
+    } finally {
+      setPostLoading(false);
+    }
+  };
+  const hanleReplyComment = () => {
+    console.log("53 " + userComment);
+  };
+
+  const userWantToReply = (status, commentId, personToComment) => {
+    console.log(
+      commentId +
+        " " +
+        personToComment +
+        " here is id that we want to add reply..."
+    );
+
+    if (status) {
+      setIsUserReplying(true);
+      setReplyingTo(personToComment);
     }
   };
 
@@ -531,16 +605,16 @@ const Profile = () => {
           </div>
           {showPost && (
             <>
-              <div className="centerPostModal h-[400px] w-[650px] border-2 bg-black flex gap-1">
+              <div className="centerPostModal h-[420px] w-[650px] bg-black flex gap-1 rounded-md shodow-2xl">
                 <div className="h-full] w-[45%] centerDiv">
                   <img
-                    src={postDetails.post.image}
+                    src={postDetails.image}
                     alt="postImage"
                     className="object-cover"
                   />
                 </div>
-                <div className="h-full] w-[55%] centerDiv border-2 flex-col">
-                  <div className="h-[6%] min-h-[55px] w-full text-[#f5f5f5] flex items-center justify-between">
+                <div className="h-full] w-[55%] centerDiv flex-col border-[1px] border-gray-700">
+                  <div className="h-[4%] min-h-[45px] w-full text-[#f5f5f5] flex items-center justify-between  border-b-[1px] border-gray-700">
                     <span className="pl-3 h-full w-[80%] flex items-center">
                       {userDetails.userName}
                     </span>
@@ -551,16 +625,32 @@ const Profile = () => {
                       <AiFillCloseCircle className="text-[1.4rem]" />
                     </span>
                   </div>
-                  <div className="h-[70%] min-h-[63px] w-full border-2 text-[#f5f5f5] flex items-center pl-1 overflow-y-scroll flex-col">
-                    {postDetails.length > 0 ? (
+                  <div className="h-[70%] min-h-[63px] w-full text-[#f5f5f5] flex items-center pl-1 overflow-y-scroll flex-col">
+                    <div className="h-auto w-full flex">
+                      <span className="h-[30px] w-[30px] flex justify-center mt-2">
+                        <img
+                          src={userDetails.profilePicture}
+                          alt=""
+                          className="h-full w-full object-cover rounded-[50%]"
+                        />
+                      </span>
+                      <span className="h-auto w-[90%] text-[0.9rem] ml-2 p-1">
+                        <span className="font-semibold">
+                          {" "}
+                          {userDetails.userName}
+                        </span>
+                        &nbsp;
+                        {postDetails.desc}
+                      </span>
+                    </div>
+                    {postComments.length > 0 ? (
                       <>
-                        {" "}
-                        {postDetails.comments.map((comment) => (
+                        {postComments.map((comment) => (
                           <>
                             <Comment
                               comment={comment}
                               key={comment._id}
-                              deleteRequest={deleteComment}
+                              userReplyingStatus={userWantToReply}
                             />
                           </>
                         ))}
@@ -573,17 +663,14 @@ const Profile = () => {
                       </>
                     )}
                   </div>
-                  <div className="h-[15%] min-h-[55px] w-full flex gap-1">
+                  <div className="h-[6%] min-h-[55px] w-full flex gap-1 border-t-[1px] border-gray-700">
                     <span className="h-full w-[80%] flex items-center text-white pl-2">
                       {postLikedBefore ? (
                         <>
                           <FcLike
                             className="text-[1.5rem]"
                             onClick={() =>
-                              handleLikeUpdate(
-                                postDetails.post._id,
-                                loggedInUserId
-                              )
+                              handleLikeUpdate(postDetails._id, loggedInUserId)
                             }
                           />
                         </>
@@ -592,10 +679,7 @@ const Profile = () => {
                           <AiOutlineHeart
                             className="text-[1.5rem]"
                             onClick={() =>
-                              handleLikeUpdate(
-                                postDetails.post._id,
-                                loggedInUserId
-                              )
+                              handleLikeUpdate(postDetails._id, loggedInUserId)
                             }
                           />
                         </>
@@ -634,7 +718,7 @@ const Profile = () => {
                                 onClick={() =>
                                   updateBookmarkStatus(
                                     true,
-                                    postDetails.post._id,
+                                    postDetails._id,
                                     loggedInUserId
                                   )
                                 }
@@ -651,7 +735,7 @@ const Profile = () => {
                                 onClick={() =>
                                   updateBookmarkStatus(
                                     false,
-                                    postDetails.post._id,
+                                    postDetails._id,
                                     loggedInUserId
                                   )
                                 }
@@ -662,8 +746,59 @@ const Profile = () => {
                       )}
                     </span>
                   </div>
-                  <div className="h-[10%] min-h-[55px] w-full border-2 text-[#f5f5f5] flex items-center pl-3">
-                    {userDetails.userName}
+                  <div className="h-[20%] min-h-[55px] w-full text-[#f5f5f5] flex items-center border-t-[1px] border-gray-700">
+                    {isUserReplying ? (
+                      <>
+                        <div className="h-[100%] w-full flex flex-col">
+                          <span className="h-[40%] w-full pl-1 flex items-center text-[0.8rem]">
+                            <span className="h-full w-[80%] opacity-60">
+                              Replying to @{replyingTo}
+                            </span>
+                            <span
+                              className="h-full w-[20%] pr-2 centerDiv"
+                              onClick={() => setIsUserReplying(!isUserReplying)}
+                            >
+                              <AiFillCloseCircle className="text-[1.1rem]" />
+                            </span>
+                          </span>
+                          <div className="h-[70%] w-full flex items-center overflow-hidden">
+                            <textarea
+                              className="h-[100%] text-[0.9rem]  bg-black resize-none min-w-[290px] placeHolderCss outline-none border-none"
+                              value={userComment}
+                              onChange={(event) =>
+                                setUserComment(event.target.value)
+                              }
+                              placeholder="Add your Reply here..."
+                            />
+                            <span
+                              className="h-[100%] text-[0.9rem] w-[15%] opacity-90 centerDiv"
+                              onClick={hanleReplyComment}
+                            >
+                              post
+                            </span>
+                          </div>
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <div className="h-auto w-full flex justify-between">
+                          <textarea
+                            className="h-auto text-[0.9rem] bg-black min-h-[50px] min-w-[270px] pt-2 resize-none placeHolderCss border-none outline-none"
+                            value={userComment}
+                            onChange={(event) =>
+                              setUserComment(event.target.value)
+                            }
+                            placeholder="Add your comment here..."
+                          />
+                          <span
+                            className="h-auto text-[0.9rem] w-[15%] opacity-90 pr-3 flex justify-center pt-3 cursor-pointer"
+                            onClick={() => handlePostComment(postDetails._id)}
+                          >
+                            post
+                          </span>
+                        </div>
+                      </>
+                    )}
                   </div>
                 </div>
               </div>

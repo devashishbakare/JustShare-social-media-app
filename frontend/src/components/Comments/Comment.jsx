@@ -6,7 +6,8 @@ import axios from "axios";
 import { baseUrl } from "../constants";
 import "react-toastify/dist/ReactToastify.css";
 
-export const Comment = ({ comment, deleteRequest }) => {
+export const Comment = ({ comment, userReplyingStatus }) => {
+  console.log("hit me at least");
   const user = JSON.parse(localStorage.getItem("user"));
   const userId = user._id;
   const [commentLoader, setCommentLoader] = useState(false);
@@ -66,7 +67,14 @@ export const Comment = ({ comment, deleteRequest }) => {
           </span>
           <span className="text-[0.7rem] mt-1">
             {comment.like.length}&nbsp;likes&nbsp;
-            <span className="ml-1 mr-1 cursor-pointer">Reply</span>
+            <span
+              className="ml-1 mr-1 cursor-pointer"
+              onClick={() =>
+                userReplyingStatus(true, comment._id, comment.commenterName)
+              }
+            >
+              Reply
+            </span>
           </span>
           {comment.reply.length > 0 && (
             <>
@@ -104,7 +112,7 @@ export const Comment = ({ comment, deleteRequest }) => {
                               <Comment
                                 key={reply._id}
                                 comment={reply}
-                                deleteRequest={deleteRequest}
+                                userReplyingStatus={userReplyingStatus}
                               />
                             </>
                           ))}

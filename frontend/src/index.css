@@ -19,3 +19,8 @@
   left: 50%;
   transform: translate(-50%, -50%);
 }
+
+.placeHolderCss::placeholder {
+  padding-top: 8px;
+  padding-left: 4px;
+}
