@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const commentController = require("../controller/commentController");
 router.post("/create", commentController.createComment);
+router.post("/commentReply", commentController.createCommentReply);
 router.put("/edit", commentController.updateComment);
 router.delete("/delete", commentController.deleteComment);
 router.delete("/deleteReply", commentController.deleteReplyComment);

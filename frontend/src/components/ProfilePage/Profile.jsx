@@ -49,6 +49,7 @@ const Profile = () => {
   const [isUserReplying, setIsUserReplying] = useState(false);
   const [userComment, setUserComment] = useState("");
   const [replyingTo, setReplyingTo] = useState("");
+  const [commentToReplyId, setCommnetToReplyId] = useState("");
   useEffect(() => {
     const getUserDetails = async () => {
       try {
@@ -205,6 +206,7 @@ const Profile = () => {
         config
       );
       if (postResponse.status === 200) {
+        setIsUserReplying(false);
         const isBookmark = userDetails.bookmark.includes(
           postResponse.data.post._id
         );
@@ -356,6 +358,7 @@ const Profile = () => {
 
   const handlePostComment = async (postId) => {
     try {
+      console.log("postId " + postId + " comment " + userComment);
       setPostLoading(true);
       console.log("test" + userComment);
       const config = {
@@ -405,8 +408,66 @@ const Profile = () => {
       setPostLoading(false);
     }
   };
-  const hanleReplyComment = () => {
-    console.log("53 " + userComment);
+  const handleReplyComment = async (commentId) => {
+    console.log("411 " + userComment + " whom to comment " + commentId);
+
+    try {
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      };
+      const data = {
+        userId,
+        postId: "-1",
+        newComment: userComment,
+        commentId,
+      };
+      const response = await axios.post(
+        `${baseUrl}/comment/commentReply`,
+        data,
+        config
+      );
+
+      if (response.status === 200) {
+        setUserComment("");
+        setPostComments((prevComments) => {
+          const updatedComments = prevComments.map((eachComment) => {
+            if (eachComment._id === commentId) {
+              const replyArray = [response.data, ...eachComment.reply];
+              return { ...eachComment, reply: replyArray };
+            }
+            return eachComment;
+          });
+          return updatedComments;
+        });
+
+        toast.success("Reply has been added", {
+          position: toast.POSITION.TOP_CENTER,
+          autoClose: 3000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("Replying Comment Failed, try again later", {
+        position: toast.POSITION.TOP_CENTER,
+        autoClose: 3000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
+    } finally {
+      setIsUserReplying(false);
+    }
   };
 
   const userWantToReply = (status, commentId, personToComment) => {
@@ -418,6 +479,7 @@ const Profile = () => {
     );
 
     if (status) {
+      setCommnetToReplyId(commentId);
       setIsUserReplying(true);
       setReplyingTo(personToComment);
     }
@@ -772,7 +834,9 @@ const Profile = () => {
                             />
                             <span
                               className="h-[100%] text-[0.9rem] w-[15%] opacity-90 centerDiv"
-                              onClick={hanleReplyComment}
+                              onClick={() =>
+                                handleReplyComment(commentToReplyId)
+                              }
                             >
                               post
                             </span>

@@ -41,6 +41,40 @@ const createComment = async (req, res) => {
   }
 };
 
+const createCommentReply = async (req, res) => {
+  try {
+    const { userId, postId, newComment, commentId } = req.body;
+    let user = await User.findById(userId);
+    if (!user) return res.status(404).json("User Not Found");
+
+    let comment = new Comment({
+      postId: postId,
+      userId: userId,
+      text: newComment,
+      commenterName: user.userName,
+      commenterProfilePicture: user.profilePicture,
+    });
+
+    await comment.save();
+
+    const commentToAddReply = await Comment.findById(commentId);
+
+    if (!commentToAddReply) {
+      return res.status(404).json("comment Not Found");
+    }
+
+    await commentToAddReply.updateOne({
+      $push: { reply: comment._id },
+    });
+
+    return res.status(200).json(comment._id);
+  } catch (error) {
+    return res
+      .status(500)
+      .json("something went wrong while adding commment Reply");
+  }
+};
+
 const updateComment = async (req, res) => {
   let postId = req.body.postId;
   let commentId = req.body.commentId;
@@ -272,4 +306,5 @@ module.exports = {
   commentLike,
   deleteReplyComment,
   deleteAllReply,
+  createCommentReply,
 };
