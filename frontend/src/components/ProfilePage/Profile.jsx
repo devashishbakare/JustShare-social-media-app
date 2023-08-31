@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { useLocation } from "react-router-dom";
 import { DiJavascript1 } from "react-icons/di";
 import {
@@ -20,17 +20,18 @@ import Post from "../Post/Post";
 import Spinners from "../Spinners";
 import CirculareSpinner from "../CirculareSpinner";
 import { Comment } from "../Comments/Comment";
-const Profile = () => {
+const Profile = React.memo(() => {
   //visiters userId details
   const location = useLocation();
   const userId = location.state;
-  console.log("userId " + userId);
+  //console.log("userId " + userId);
 
   //loggedIn userId details
   const storedUserDetails = localStorage.getItem("user");
   const user = JSON.parse(storedUserDetails);
   const loggedInUserId = user._id;
-  console.log("from storage", loggedInUserId);
+  const parentId = "-1";
+  //console.log("from storage", loggedInUserId);
   const [postLoading, setPostLoading] = useState(false);
   const [userDetails, setUserDetails] = useState([]);
   const [userPosts, setUserPosts] = useState([]);
@@ -71,18 +72,20 @@ const Profile = () => {
         console.log("Post data", postResponse.data);
         console.log("User data", userResponse.data);
 
-        if (userId !== loggedInUserId) {
-          if (userResponse.data.followers.includes(loggedInUserId)) {
-            setFollowStatus("Unfollow");
-          } else {
-            setFollowStatus("Follow");
+        if (userResponse.status === 200 && postResponse.status === 200) {
+          if (userId !== loggedInUserId) {
+            if (userResponse.data.followers.includes(loggedInUserId)) {
+              setFollowStatus("Unfollow");
+            } else {
+              setFollowStatus("Follow");
+            }
           }
+          setUserDetails(userResponse.data);
+          setUserPosts(postResponse.data);
+          setFollowersCount(userResponse.data.followers.length);
+          setFollowingsCount(userResponse.data.followings.length);
+          setIsLoading(false);
         }
-        setUserDetails(userResponse.data);
-        setUserPosts(postResponse.data);
-        setFollowersCount(userResponse.data.followers.length);
-        setFollowingsCount(userResponse.data.followings.length);
-        setIsLoading(false);
       } catch (error) {
         console.error("Eroor while fetchin user Details", error);
       }
@@ -430,7 +433,6 @@ const Profile = () => {
       );
 
       if (response.status === 200) {
-        setUserComment("");
         setPostComments((prevComments) => {
           const updatedComments = prevComments.map((eachComment) => {
             if (eachComment._id === commentId) {
@@ -439,18 +441,9 @@ const Profile = () => {
             }
             return eachComment;
           });
+          setUserComment("");
+          setIsUserReplying(false);
           return updatedComments;
-        });
-
-        toast.success("Reply has been added", {
-          position: toast.POSITION.TOP_CENTER,
-          autoClose: 3000,
-          hideProgressBar: true,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "dark",
         });
       }
     } catch (error) {
@@ -465,25 +458,26 @@ const Profile = () => {
         progress: undefined,
         theme: "dark",
       });
-    } finally {
-      setIsUserReplying(false);
     }
   };
 
-  const userWantToReply = (status, commentId, personToComment) => {
-    console.log(
-      commentId +
-        " " +
-        personToComment +
-        " here is id that we want to add reply..."
-    );
+  const userWantToReply = useCallback(
+    (status, commentId, personToComment) => {
+      console.log(
+        commentId +
+          " " +
+          personToComment +
+          " here is id that we want to add reply..."
+      );
 
-    if (status) {
-      setCommnetToReplyId(commentId);
-      setIsUserReplying(true);
-      setReplyingTo(personToComment);
-    }
-  };
+      if (status) {
+        setCommnetToReplyId(commentId);
+        setIsUserReplying(true);
+        setReplyingTo(personToComment);
+      }
+    },
+    [setCommnetToReplyId, setReplyingTo]
+  );
 
   return (
     <>
@@ -710,6 +704,7 @@ const Profile = () => {
                         {postComments.map((comment) => (
                           <>
                             <Comment
+                              parentId={parentId}
                               comment={comment}
                               key={comment._id}
                               userReplyingStatus={userWantToReply}
@@ -873,6 +868,6 @@ const Profile = () => {
       )}
     </>
   );
-};
+});
 
 export default Profile;

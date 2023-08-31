@@ -106,18 +106,18 @@ const deleteComment = async (req, res) => {
     const { postId, commentId } = req.body;
 
     const comment = await Comment.findById(commentId);
-    if (comment) {
-      const postUpdateStatus = await Post.updateOne(
-        { _id: postId },
-        { $pull: { comment: comment._id } }
-      );
-      const commentDeletionStatus = await Comment.deleteOne({ _id: commentId });
-      const response = {
-        postUpdateStatus,
-        commentDeletionStatus,
-      };
-      return res.status(200).json(response);
+    const post = await Post.findById(postId);
+
+    if (!post || !comment) {
+      return res.status(404).json("post or comment not found");
     }
+
+    const postUpdateStatus = await post.updateOne({
+      $pull: { comment: comment._id },
+    });
+    const commentDeletionStatus = await Comment.deleteOne({ _id: commentId });
+
+    return res.status(200).json(true);
   } catch (err) {
     console.error(err);
     return res.status(500).json("Error while deleting comment");
@@ -254,7 +254,7 @@ const deleteReplyComment = async (req, res) => {
     console.log(commentId + " data " + replyId);
 
     const deletedReply = await Comment.findByIdAndUpdate(
-      { id: commentId },
+      { _id: commentId },
       {
         $pull: { reply: replyId },
       }
