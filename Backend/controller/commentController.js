@@ -1,7 +1,7 @@
 const Post = require("../models/Post");
 const User = require("../models/User");
 const Comment = require("../models/Comment");
-
+const mongoose = require("mongoose");
 const createComment = async (req, res) => {
   const { userId, postId, newComment } = req.body;
 
@@ -251,22 +251,31 @@ const deleteReplyComment = async (req, res) => {
   // data: { commentId: deleteFrom, replyId: commentId }
   try {
     const { commentId, replyId } = req.body;
-    console.log(commentId + " data " + replyId);
+    console.log("parentComment " + commentId + " reply Id" + replyId);
 
-    const deletedReply = await Comment.findByIdAndUpdate(
-      { _id: commentId },
-      {
-        $pull: { reply: replyId },
-      }
-    );
+    const comment = await Comment.findById(commentId);
+    const rId = new mongoose.Types.ObjectId(replyId);
+    await comment.updateOne({
+      $pull: { reply: { $in: [rId, "null"] } },
+    });
 
+    // await comment.updateOne({
+    //   $pull: { reply: null },
+    // });
+
+    // const updateComment = await Comment.findByIdAndUpdate(
+    //   { _id: commentId },
+    //   {
+    //     $pull: { reply: replyId },
+    //   }
+    // );
+
+    const deletedReply = await Comment.findByIdAndDelete(replyId);
     if (deletedReply) {
-      const findReply = await Comment.findByIdAndDelete(replyId);
-      if (findReply) {
-        return res.status(200).json(true);
-      }
+      return res.status(200).json(deletedReply._id);
     }
   } catch (error) {
+    console.log("what an error " + error);
     return res.status(500).json("something went wrong");
   }
 };
@@ -283,15 +292,38 @@ const deleteAllReply = async (req, res) => {
       })
     );
 
-    // await Promise.all(
-    //   allPost.map(async (post) => {
-    //     await post.comment({
-    //       $set: { reply: [] },
-    //     });
-    //   })
-    // );
+    await Comment.deleteMany();
     return res.status(200).json("deleted All");
   } catch (error) {
+    return res.status(500).json("something went wrong");
+  }
+};
+
+const removeNull = async (req, res) => {
+  try {
+    let commentId = req.params.id;
+    const updatedComment = await Comment.findByIdAndUpdate(
+      { _id: commentId },
+      {
+        $pull: { reply: null },
+      }
+    );
+    return res.status(200).json(updatedComment);
+  } catch (error) {
+    return res.status(500).json("something went wrong");
+  }
+};
+
+const getCommentDetails = async (req, res) => {
+  try {
+    const commentId = req.params.id;
+    const comment = await Comment.findById(commentId);
+
+    if (comment) {
+      return res.status(200).json(comment);
+    }
+  } catch (error) {
+    console.log(error);
     return res.status(500).json("something went wrong");
   }
 };
@@ -307,4 +339,6 @@ module.exports = {
   deleteReplyComment,
   deleteAllReply,
   createCommentReply,
+  removeNull,
+  getCommentDetails,
 };

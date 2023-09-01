@@ -381,6 +381,7 @@ const Profile = React.memo(() => {
       );
       if (response.status === 200) {
         const newComment = response.data.data;
+        console.log("new COmment Id " + newComment._id);
         const updatedComments = [newComment, ...postComments];
         setUserComment("");
         setPostComments(updatedComments);
@@ -433,6 +434,7 @@ const Profile = React.memo(() => {
       );
 
       if (response.status === 200) {
+        console.log("reply Id " + response.data);
         setPostComments((prevComments) => {
           const updatedComments = prevComments.map((eachComment) => {
             if (eachComment._id === commentId) {
