@@ -51,6 +51,7 @@ const Profile = React.memo(() => {
   const [userComment, setUserComment] = useState("");
   const [replyingTo, setReplyingTo] = useState("");
   const [commentToReplyId, setCommnetToReplyId] = useState("");
+
   useEffect(() => {
     const getUserDetails = async () => {
       try {
@@ -94,53 +95,55 @@ const Profile = React.memo(() => {
     getUserDetails();
   }, [userId]);
 
-  const deleteComment = async (deletionRequest, commentId, deleteFrom) => {
-    try {
-      if (deletionRequest === "comment") {
-        const config = {
-          headers: {
-            "Config-Type": "application/json",
-          },
-          data: { postId: deleteFrom, commentId },
-        };
-        const deleteResponse = await axios.delete(
-          `${baseUrl}/comment/delete`,
-          config
-        );
+  const deleteComment = useCallback(
+    async (deleteRequest, postId, commentId) => {
+      console.log(deleteRequest + " " + postId + " " + commentId);
+      if (deleteRequest) {
+        try {
+          const config = {
+            headers: {
+              "Config-Type": "application/json",
+            },
+            data: {
+              postId,
+              commentId,
+            },
+          };
 
-        if (deleteResponse.status === 200) {
-          return true;
-        }
-      } else {
-        const config = {
-          headers: {
-            "Config-Type": "application/json",
-          },
-          data: { commentId: deleteFrom, replyId: commentId },
-        };
-        const deleteResponse = await axios.delete(
-          `${baseUrl}/comment/deletReply}`,
-          config
-        );
+          const deleteCommentResponse = await axios.delete(
+            `${baseUrl}/comment/delete`,
+            config
+          );
 
-        if (deleteResponse.status === 200) {
-          return true;
+          if (deleteCommentResponse.status === 200) {
+            console.log(deleteCommentResponse.data);
+
+            const updatedListOfComments = [];
+            postComments.map((comment) => {
+              if (comment._id !== deleteCommentResponse.data) {
+                updatedListOfComments.push(comment);
+              }
+            });
+            setPostComments(updatedListOfComments);
+            return true;
+          }
+        } catch (error) {
+          toast.error("Something went wrong, Try again later", {
+            position: toast.POSITION.TOP_CENTER,
+            autoClose: 3000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "dark",
+          });
+          return false;
         }
       }
-    } catch (error) {
-      toast.error("Something went wrong, Try again later", {
-        position: toast.POSITION.TOP_CENTER,
-        autoClose: 3000,
-        hideProgressBar: true,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "dark",
-      });
-      return false;
-    }
-  };
+    },
+    []
+  );
 
   const handleFollowRequest = async () => {
     if (userId === loggedInUserId) {
@@ -710,6 +713,7 @@ const Profile = React.memo(() => {
                               comment={comment}
                               key={comment._id}
                               userReplyingStatus={userWantToReply}
+                              deleteComment={deleteComment}
                             />
                           </>
                         ))}

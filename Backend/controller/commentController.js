@@ -115,9 +115,16 @@ const deleteComment = async (req, res) => {
     const postUpdateStatus = await post.updateOne({
       $pull: { comment: comment._id },
     });
-    const commentDeletionStatus = await Comment.deleteOne({ _id: commentId });
 
-    return res.status(200).json(true);
+    await Promise.all(
+      comment.reply.map(async (replyId) => {
+        return await Comment.findByIdAndDelete(replyId);
+      })
+    );
+
+    const commentDeletionStatus = await Comment.deleteOne({ _id: comment._id });
+
+    return res.status(200).json(commentDeletionStatus._id);
   } catch (err) {
     console.error(err);
     return res.status(500).json("Error while deleting comment");
@@ -258,17 +265,6 @@ const deleteReplyComment = async (req, res) => {
     await comment.updateOne({
       $pull: { reply: { $in: [rId, "null"] } },
     });
-
-    // await comment.updateOne({
-    //   $pull: { reply: null },
-    // });
-
-    // const updateComment = await Comment.findByIdAndUpdate(
-    //   { _id: commentId },
-    //   {
-    //     $pull: { reply: replyId },
-    //   }
-    // );
 
     const deletedReply = await Comment.findByIdAndDelete(replyId);
     if (deletedReply) {
