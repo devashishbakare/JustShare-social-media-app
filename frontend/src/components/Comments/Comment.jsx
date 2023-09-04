@@ -58,47 +58,54 @@ export const Comment = React.memo(
       }
     };
 
+    const deleteReply = async (commentId, replyId) => {
+      try {
+        const config = {
+          headers: {
+            "Config-Type": "application/json",
+          },
+          data: { commentId, replyId },
+        };
+        console.log("deleting a reply here");
+        const deleteResponse = await axios.delete(
+          `${baseUrl}/comment/deleteReply`,
+          config
+        );
+
+        if (deleteResponse.status === 200) {
+          const updatedReply = [];
+          replies.map((reply) => {
+            if (reply._id !== deleteResponse.data) {
+              updatedReply.push(reply);
+            }
+          });
+          setReplies(updatedReply);
+          if (updatedReply.length == 0) {
+            setToggleShowComments(false);
+          }
+          setCommentReplyCount(updatedReply.length);
+        }
+      } catch (error) {
+        toast.error("something went wrong", {
+          position: toast.POSITION.TOP_CENTER,
+          autoClose: 3000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
+      }
+    };
+
     const handleDeleteComment = async (postId, parentId, commentId) => {
       console.log(postId + " -> " + parentId + " -> " + commentId);
-      /**
-         router.delete("/delete", commentController.deleteComment);
-         router.delete("/deleteReply", commentController.deleteReplyComment);
-         */
       try {
         if (postId === "-1") {
-          const config = {
-            headers: {
-              "Config-Type": "application/json",
-            },
-            data: { commentId: parentId, replyId: commentId },
-          };
-          console.log("deleting a reply here");
-          const deleteResponse = await axios.delete(
-            `${baseUrl}/comment/deleteReply`,
-            config
-          );
-
-          if (deleteResponse.status === 200) {
-            const updatedReply = [];
-            replies.map((reply) => {
-              if (reply._id !== deleteResponse.data) {
-                updatedReply.push(reply);
-              }
-            });
-            setReplies(updatedReply);
-            setCommentReplyCount(updatedReply.length);
-            setShowCommentMenu(false);
-            toast.success("Reply has been deleted..", {
-              position: toast.POSITION.TOP_CENTER,
-              autoClose: 3000,
-              hideProgressBar: true,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
-              theme: "dark",
-            });
-          }
+          console.log("call initiated for delete reply");
+          await deleteComment(parentId, commentId);
+          setShowCommentMenu(false);
         } else {
           await deleteComment(true, postId, commentId);
           console.log("came back after this");
@@ -159,13 +166,15 @@ export const Comment = React.memo(
                   <>
                     {!toggleShowComments ? (
                       <>
-                        <span
-                          className="text-[0.7rem] mt-2 cursor-pointer"
-                          onClick={() => fetchReplies(comment._id)}
-                        >
-                          ---- &nbsp; View replies(
-                          {commentReplyCount})
-                        </span>
+                        {commentReplyCount > 0 && (
+                          <span
+                            className="text-[0.7rem] mt-2 cursor-pointer"
+                            onClick={() => fetchReplies(comment._id)}
+                          >
+                            ---- &nbsp; View replies(
+                            {commentReplyCount})
+                          </span>
+                        )}
                       </>
                     ) : (
                       <>
@@ -184,7 +193,7 @@ export const Comment = React.memo(
                                   parentId={comment._id}
                                   comment={reply}
                                   userReplyingStatus={userReplyingStatus}
-                                  deleteComment={deleteComment}
+                                  deleteComment={deleteReply}
                                 />
                               </>
                             ))}
