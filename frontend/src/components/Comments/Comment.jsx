@@ -7,7 +7,13 @@ import { baseUrl } from "../constants";
 import "react-toastify/dist/ReactToastify.css";
 
 export const Comment = React.memo(
-  ({ parentId, comment, userReplyingStatus, deleteComment }) => {
+  ({
+    parentId,
+    comment,
+    userReplyingStatus,
+    deleteComment,
+    userWantToEdit,
+  }) => {
     console.log("re-rendered");
     const user = JSON.parse(localStorage.getItem("user"));
     const userId = user._id;
@@ -78,9 +84,10 @@ export const Comment = React.memo(
             if (reply._id !== deleteResponse.data) {
               updatedReply.push(reply);
             }
+            return reply;
           });
           setReplies(updatedReply);
-          if (updatedReply.length == 0) {
+          if (updatedReply.length === 0) {
             setToggleShowComments(false);
           }
           setCommentReplyCount(updatedReply.length);
@@ -100,15 +107,12 @@ export const Comment = React.memo(
     };
 
     const handleDeleteComment = async (postId, parentId, commentId) => {
-      console.log(postId + " -> " + parentId + " -> " + commentId);
       try {
         if (postId === "-1") {
-          console.log("call initiated for delete reply");
           await deleteComment(parentId, commentId);
           setShowCommentMenu(false);
         } else {
           await deleteComment(true, postId, commentId);
-          console.log("came back after this");
           setShowCommentMenu(false);
         }
       } catch (error) {
@@ -125,6 +129,11 @@ export const Comment = React.memo(
       }
 
       return;
+    };
+
+    const handleEditReply = (status, postId, commentId, commentText) => {
+      userWantToEdit(status, postId, commentId, commentText);
+      setShowCommentMenu(false);
     };
 
     return (
@@ -194,6 +203,7 @@ export const Comment = React.memo(
                                   comment={reply}
                                   userReplyingStatus={userReplyingStatus}
                                   deleteComment={deleteReply}
+                                  userWantToEdit={userWantToEdit}
                                 />
                               </>
                             ))}
@@ -226,7 +236,17 @@ export const Comment = React.memo(
             {showCommentMenu && (
               <>
                 <div className="absolute z-10 top-[1%] right-[-20%] h-auto w-auto border-2 flex flex-col bg-[#f5f5f5]">
-                  <span className="h-[40px] w-[100px] centerDiv text-black text-[0.9rem] cursor-pointer">
+                  <span
+                    className="h-[40px] w-[100px] centerDiv text-black text-[0.9rem] cursor-pointer"
+                    onClick={() =>
+                      handleEditReply(
+                        true,
+                        comment.postId,
+                        comment._id,
+                        comment.text
+                      )
+                    }
+                  >
                     Edit
                   </span>
                   <hr className="ml-1" />

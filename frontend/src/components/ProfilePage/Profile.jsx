@@ -9,14 +9,13 @@ import {
 } from "react-icons/ai";
 import { FcGrid, FcPrevious, FcLike } from "react-icons/fc";
 import { FaRocketchat, FaRegNewspaper, FaBookmark } from "react-icons/fa";
-import { BsBookmarkHeartFill } from "react-icons/bs";
 import { FcBookmark } from "react-icons/fc";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { baseUrl } from "../constants";
-import Post from "../Post/Post";
+//import Post from "../Post/Post";
 import Spinners from "../Spinners";
 import CirculareSpinner from "../CirculareSpinner";
 import { Comment } from "../Comments/Comment";
@@ -51,6 +50,9 @@ const Profile = React.memo(() => {
   const [userComment, setUserComment] = useState("");
   const [replyingTo, setReplyingTo] = useState("");
   const [commentToReplyId, setCommnetToReplyId] = useState("");
+  const [editCommentId, setEditCommentId] = useState("");
+  const [isUserEditing, setIsUserEditing] = useState(false);
+  const [postIdForCommentUpdation, setPostIdForCommentUpdation] = useState("");
 
   useEffect(() => {
     const getUserDetails = async () => {
@@ -93,7 +95,7 @@ const Profile = React.memo(() => {
     };
 
     getUserDetails();
-  }, [userId]);
+  }, [userId, loggedInUserId]);
 
   const deleteComment = useCallback(
     async (deleteRequest, postId, commentId) => {
@@ -123,6 +125,7 @@ const Profile = React.memo(() => {
               if (comment._id !== deleteCommentResponse.data) {
                 updatedListOfComments.push(comment);
               }
+              return comment;
             });
             setPostComments(updatedListOfComments);
             return true;
@@ -227,7 +230,8 @@ const Profile = React.memo(() => {
         setPostLikeCount(postResponse.data.post.like.length);
         setPostDetails(postResponse.data.post);
         setPostComments(postResponse.data.comments);
-
+        setIsUserEditing(false);
+        setUserComment("");
         setShowPost(true);
       }
     } catch (error) {
@@ -484,6 +488,98 @@ const Profile = React.memo(() => {
     [setCommnetToReplyId, setReplyingTo]
   );
 
+  const userWantToEdit = useCallback(
+    (status, postId, commentId, commentText) => {
+      console.log(
+        postId + " " + commentId + " commentToEdit " + " textIs " + commentText
+      );
+
+      if (status) {
+        setEditCommentId(commentId);
+        setUserComment(commentText);
+        setPostIdForCommentUpdation(postId);
+        setIsUserEditing(true);
+      }
+    },
+    [setEditCommentId]
+  );
+
+  const handleEditComment = async (commentToBeUpdated) => {
+    try {
+      console.log(commentToBeUpdated + " with this text " + userComment);
+
+      //we have to make a put request
+      //endpoint => comment/edit
+
+      const config = {
+        headers: {
+          "Config-type": "application/json",
+        },
+      };
+
+      if (postIdForCommentUpdation !== "-1") {
+        const data = {
+          postId: postIdForCommentUpdation,
+          commentId: commentToBeUpdated,
+          text: userComment,
+        };
+        const editResponse = await axios.put(
+          `${baseUrl}/comment/edit`,
+          data,
+          config
+        );
+        if (editResponse.status === 200) {
+          setIsUserEditing(false);
+          setUserComment("");
+          setPostComments((prevComments) => {
+            return prevComments.map((comment) => {
+              if (comment._id === editResponse.data._id) {
+                return {
+                  ...comment,
+                  text: editResponse.data.text,
+                };
+              }
+
+              return comment;
+            });
+          });
+        }
+      } else {
+        const data = {
+          commentId: commentToBeUpdated,
+          text: userComment,
+        };
+        const editResponse = await axios.put(
+          `${baseUrl}/comment/editReply`,
+          data,
+          config
+        );
+
+        if (editResponse.status === 200) {
+          setIsUserEditing(false);
+          setUserComment("");
+        }
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("Edit Comment Failed, try again later", {
+        position: toast.POSITION.TOP_CENTER,
+        autoClose: 3000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
+    }
+  };
+
+  const handleCloseEditBar = () => {
+    setIsUserEditing(!isUserEditing);
+    setUserComment("");
+  };
+
   return (
     <>
       {isLoading ? (
@@ -714,6 +810,7 @@ const Profile = React.memo(() => {
                               key={comment._id}
                               userReplyingStatus={userWantToReply}
                               deleteComment={deleteComment}
+                              userWantToEdit={userWantToEdit}
                             />
                           </>
                         ))}
@@ -747,7 +844,7 @@ const Profile = React.memo(() => {
                           />
                         </>
                       )}
-                      {postLikeCount == 0 ? (
+                      {postLikeCount === 0 ? (
                         <>
                           {" "}
                           &nbsp;&nbsp;
@@ -838,6 +935,38 @@ const Profile = React.memo(() => {
                               onClick={() =>
                                 handleReplyComment(commentToReplyId)
                               }
+                            >
+                              post
+                            </span>
+                          </div>
+                        </div>
+                      </>
+                    ) : isUserEditing ? (
+                      <>
+                        <div className="h-[100%] w-full flex flex-col">
+                          <span className="h-[40%] w-full pl-1 flex items-center text-[0.8rem]">
+                            <span className="h-full w-[80%] opacity-60">
+                              Edit :
+                            </span>
+                            <span
+                              className="h-full w-[20%] pr-2 centerDiv"
+                              onClick={handleCloseEditBar}
+                            >
+                              <AiFillCloseCircle className="text-[1.1rem]" />
+                            </span>
+                          </span>
+                          <div className="h-[70%] w-full flex items-center overflow-hidden">
+                            <textarea
+                              className="h-[100%] text-[0.9rem]  bg-black resize-none min-w-[290px] placeHolderCss outline-none border-none"
+                              value={userComment}
+                              onChange={(event) =>
+                                setUserComment(event.target.value)
+                              }
+                              placeholder="Edit here..."
+                            />
+                            <span
+                              className="h-[100%] text-[0.9rem] w-[15%] opacity-90 centerDiv"
+                              onClick={() => handleEditComment(editCommentId)}
                             >
                               post
                             </span>

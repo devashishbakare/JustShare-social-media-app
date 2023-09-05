@@ -324,6 +324,26 @@ const getCommentDetails = async (req, res) => {
   }
 };
 
+const updateCommentReply = async (req, res) => {
+  const { commentId, text } = req.body;
+  console.log(commentId + " text " + text);
+  try {
+    const updatedComment = await Comment.findByIdAndUpdate(
+      { _id: commentId },
+      { text: text },
+      { new: true }
+    );
+    if (updateComment) {
+      return res.status(200).json(updateComment);
+    } else {
+      return res.status(404).json("user not found");
+    }
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json("something went wrong");
+  }
+};
+
 module.exports = {
   createComment,
   updateComment,
@@ -337,4 +357,5 @@ module.exports = {
   createCommentReply,
   removeNull,
   getCommentDetails,
+  updateCommentReply,
 };

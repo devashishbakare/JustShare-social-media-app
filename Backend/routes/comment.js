@@ -5,6 +5,7 @@ router.get("/fetchComment/:id", commentController.getCommentDetails);
 router.post("/create", commentController.createComment);
 router.post("/commentReply", commentController.createCommentReply);
 router.put("/edit", commentController.updateComment);
+router.put("/editReply", commentController.updateCommentReply);
 router.delete("/delete", commentController.deleteComment);
 router.delete("/deleteReply", commentController.deleteReplyComment);
 router.put("/reply", commentController.commentReply);
