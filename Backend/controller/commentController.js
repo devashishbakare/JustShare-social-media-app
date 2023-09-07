@@ -330,11 +330,10 @@ const updateCommentReply = async (req, res) => {
   try {
     const updatedComment = await Comment.findByIdAndUpdate(
       { _id: commentId },
-      { text: text },
-      { new: true }
+      { text: text }
     );
     if (updateComment) {
-      return res.status(200).json(updateComment);
+      return res.status(200).json(updateComment._id);
     } else {
       return res.status(404).json("user not found");
     }

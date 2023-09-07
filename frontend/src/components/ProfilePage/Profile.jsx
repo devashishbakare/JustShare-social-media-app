@@ -50,9 +50,6 @@ const Profile = React.memo(() => {
   const [userComment, setUserComment] = useState("");
   const [replyingTo, setReplyingTo] = useState("");
   const [commentToReplyId, setCommnetToReplyId] = useState("");
-  const [editCommentId, setEditCommentId] = useState("");
-  const [isUserEditing, setIsUserEditing] = useState(false);
-  const [postIdForCommentUpdation, setPostIdForCommentUpdation] = useState("");
 
   useEffect(() => {
     const getUserDetails = async () => {
@@ -230,8 +227,7 @@ const Profile = React.memo(() => {
         setPostLikeCount(postResponse.data.post.like.length);
         setPostDetails(postResponse.data.post);
         setPostComments(postResponse.data.comments);
-        setIsUserEditing(false);
-        setUserComment("");
+
         setShowPost(true);
       }
     } catch (error) {
@@ -488,28 +484,11 @@ const Profile = React.memo(() => {
     [setCommnetToReplyId, setReplyingTo]
   );
 
-  const userWantToEdit = useCallback(
-    (status, postId, commentId, commentText) => {
-      console.log(
-        postId + " " + commentId + " commentToEdit " + " textIs " + commentText
-      );
-
-      if (status) {
-        setEditCommentId(commentId);
-        setUserComment(commentText);
-        setPostIdForCommentUpdation(postId);
-        setIsUserEditing(true);
-      }
-    },
-    [setEditCommentId]
-  );
-
-  const handleEditComment = async (commentToBeUpdated) => {
+  const editComment = async (postId, commentId, text) => {
     try {
-      console.log(commentToBeUpdated + " with this text " + userComment);
-
-      //we have to make a put request
-      //endpoint => comment/edit
+      console.log(
+        " postId " + postId + " commentId " + commentId + " text " + text
+      );
 
       const config = {
         headers: {
@@ -517,48 +496,29 @@ const Profile = React.memo(() => {
         },
       };
 
-      if (postIdForCommentUpdation !== "-1") {
-        const data = {
-          postId: postIdForCommentUpdation,
-          commentId: commentToBeUpdated,
-          text: userComment,
-        };
-        const editResponse = await axios.put(
-          `${baseUrl}/comment/edit`,
-          data,
-          config
-        );
-        if (editResponse.status === 200) {
-          setIsUserEditing(false);
-          setUserComment("");
-          setPostComments((prevComments) => {
-            return prevComments.map((comment) => {
-              if (comment._id === editResponse.data._id) {
-                return {
-                  ...comment,
-                  text: editResponse.data.text,
-                };
-              }
+      const data = {
+        postId,
+        commentId,
+        text,
+      };
+      const editResponse = await axios.put(
+        `${baseUrl}/comment/edit`,
+        data,
+        config
+      );
+      if (editResponse.status === 200) {
+        setPostComments((prevComments) => {
+          return prevComments.map((comment) => {
+            if (comment._id === editResponse.data._id) {
+              return {
+                ...comment,
+                text: editResponse.data.text,
+              };
+            }
 
-              return comment;
-            });
+            return comment;
           });
-        }
-      } else {
-        const data = {
-          commentId: commentToBeUpdated,
-          text: userComment,
-        };
-        const editResponse = await axios.put(
-          `${baseUrl}/comment/editReply`,
-          data,
-          config
-        );
-
-        if (editResponse.status === 200) {
-          setIsUserEditing(false);
-          setUserComment("");
-        }
+        });
       }
     } catch (error) {
       console.log(error);
@@ -573,11 +533,6 @@ const Profile = React.memo(() => {
         theme: "dark",
       });
     }
-  };
-
-  const handleCloseEditBar = () => {
-    setIsUserEditing(!isUserEditing);
-    setUserComment("");
   };
 
   return (
@@ -810,7 +765,7 @@ const Profile = React.memo(() => {
                               key={comment._id}
                               userReplyingStatus={userWantToReply}
                               deleteComment={deleteComment}
-                              userWantToEdit={userWantToEdit}
+                              editComment={editComment}
                             />
                           </>
                         ))}
@@ -935,38 +890,6 @@ const Profile = React.memo(() => {
                               onClick={() =>
                                 handleReplyComment(commentToReplyId)
                               }
-                            >
-                              post
-                            </span>
-                          </div>
-                        </div>
-                      </>
-                    ) : isUserEditing ? (
-                      <>
-                        <div className="h-[100%] w-full flex flex-col">
-                          <span className="h-[40%] w-full pl-1 flex items-center text-[0.8rem]">
-                            <span className="h-full w-[80%] opacity-60">
-                              Edit :
-                            </span>
-                            <span
-                              className="h-full w-[20%] pr-2 centerDiv"
-                              onClick={handleCloseEditBar}
-                            >
-                              <AiFillCloseCircle className="text-[1.1rem]" />
-                            </span>
-                          </span>
-                          <div className="h-[70%] w-full flex items-center overflow-hidden">
-                            <textarea
-                              className="h-[100%] text-[0.9rem]  bg-black resize-none min-w-[290px] placeHolderCss outline-none border-none"
-                              value={userComment}
-                              onChange={(event) =>
-                                setUserComment(event.target.value)
-                              }
-                              placeholder="Edit here..."
-                            />
-                            <span
-                              className="h-[100%] text-[0.9rem] w-[15%] opacity-90 centerDiv"
-                              onClick={() => handleEditComment(editCommentId)}
                             >
                               post
                             </span>
