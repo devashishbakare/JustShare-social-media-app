@@ -5,7 +5,7 @@ import { ToastContainer, toast } from "react-toastify";
 import axios from "axios";
 import { baseUrl } from "../constants";
 import "react-toastify/dist/ReactToastify.css";
-import { AiFillCloseCircle } from "react-icons/ai";
+import { AiFillCloseCircle, AiOutlineHeart } from "react-icons/ai";
 
 export const Comment = React.memo(
   ({ parentId, comment, userReplyingStatus, deleteComment, editComment }) => {
@@ -19,6 +19,7 @@ export const Comment = React.memo(
     const [commentReplyCount, setCommentReplyCount] = useState();
     const [editCommentModal, setEditCommentModal] = useState(false);
     const [userComment, setUserComment] = useState("");
+    const [isCommentLike, setIsCommentLike] = useState(comment.like.length);
 
     console.log("this length " + comment.reply.length);
     useEffect(() => {
@@ -298,7 +299,7 @@ export const Comment = React.memo(
                 )}
               </div>
               <div className="h-auto w-[10%] flex justify-center mt-4 relative">
-                {userId === comment.userId ? (
+                {userId === comment.userId && (
                   <>
                     <div
                       className="flex gap-[2px]"
@@ -308,10 +309,6 @@ export const Comment = React.memo(
                       <span className="h-[1px] w-[1px] border-2 rounded-[50%]"></span>
                       <span className="h-[1px] w-[1px] border-2 rounded-[50%]"></span>
                     </div>
-                  </>
-                ) : (
-                  <>
-                    <FcLike className="text-[0.9rem] cursor-pointer" />
                   </>
                 )}
                 {showCommentMenu && (

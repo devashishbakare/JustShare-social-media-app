@@ -373,7 +373,7 @@ const Profile = React.memo(() => {
         },
       };
       const data = {
-        userId,
+        userId: loggedInUserId,
         postId,
         newComment: userComment,
       };
@@ -425,7 +425,7 @@ const Profile = React.memo(() => {
         },
       };
       const data = {
-        userId,
+        userId: loggedInUserId,
         postId: "-1",
         newComment: userComment,
         commentId,
