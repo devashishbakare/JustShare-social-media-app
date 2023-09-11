@@ -23,14 +23,14 @@ const Profile = React.memo(() => {
   //visiters userId details
   const location = useLocation();
   const userId = location.state;
-  //console.log("userId " + userId);
+  console.log("profileUser " + userId);
 
   //loggedIn userId details
   const storedUserDetails = localStorage.getItem("user");
   const user = JSON.parse(storedUserDetails);
   const loggedInUserId = user._id;
   const parentId = "-1";
-  //console.log("from storage", loggedInUserId);
+  console.log("from storage " + loggedInUserId);
   const [postLoading, setPostLoading] = useState(false);
   const [userDetails, setUserDetails] = useState([]);
   const [userPosts, setUserPosts] = useState([]);
@@ -50,6 +50,7 @@ const Profile = React.memo(() => {
   const [userComment, setUserComment] = useState("");
   const [replyingTo, setReplyingTo] = useState("");
   const [commentToReplyId, setCommnetToReplyId] = useState("");
+  const [followRequestLoader, setFollowRequestLoader] = useState(false);
 
   useEffect(() => {
     const getUserDetails = async () => {
@@ -150,6 +151,7 @@ const Profile = React.memo(() => {
       console.error("user can not follow himself");
     } else {
       try {
+        setFollowRequestLoader(true);
         if (followStatus === "Follow") {
           const config = {
             headers: {
@@ -178,7 +180,7 @@ const Profile = React.memo(() => {
           };
           const data = {
             requestingUser: loggedInUserId,
-            requestingUser: userId,
+            requestedUser: userId,
           };
           const response = await axios.put(
             `${baseUrl}/user/unfollow`,
@@ -187,13 +189,24 @@ const Profile = React.memo(() => {
           );
           if (response.status === 200) {
             console.log("Unfollowed");
-            setFollowingsCount(followingsCount - 1);
+            setFollowersCount(followersCount - 1);
             setFollowStatus("Follow");
           }
         }
       } catch (error) {
         console.error("Error in follow Request");
-        //todo: add notification for something went wrong, try again later
+        toast.error("something went wrong, try again later", {
+          position: toast.POSITION.TOP_CENTER,
+          autoClose: 3000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
+      } finally {
+        setFollowRequestLoader(false);
       }
     }
   };
@@ -658,8 +671,17 @@ const Profile = React.memo(() => {
                     </>
                   ) : (
                     <>
-                      <span className="h-[35acpx] w-[80px] border-2 centerDiv cursor-pointer rounded-lg">
-                        {followStatus}
+                      <span
+                        className="h-[35acpx] w-[80px] border-2 centerDiv cursor-pointer rounded-lg"
+                        onClick={handleFollowRequest}
+                      >
+                        {followRequestLoader === false ? (
+                          <>{followStatus}</>
+                        ) : (
+                          <>
+                            <CirculareSpinner />
+                          </>
+                        )}
                       </span>
                     </>
                   )}

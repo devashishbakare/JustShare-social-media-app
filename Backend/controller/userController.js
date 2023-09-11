@@ -59,6 +59,8 @@ const fetchUser = async (req, res) => {
 //updating user follower and following list, follow request fullfilled
 const followUser = async (req, res) => {
   try {
+    console.log(req.body.requestingUser + " -- " + req.body.requestedUser);
+
     let requesterUser = await User.findById(req.body.requestingUser);
     let requestToUser = await User.findById(req.body.requestedUser);
 
@@ -85,6 +87,8 @@ const followUser = async (req, res) => {
 //updated user followers and following list, unfollow request fullfilled
 const unfollowUser = async (req, res) => {
   try {
+    console.log(req.body.requestingUser + " -- " + req.body.requestedUser);
+
     let requesterUser = await User.findById(req.body.requestingUser);
     let requestToUser = await User.findById(req.body.requestedUser);
 
