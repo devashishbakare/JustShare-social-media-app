@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { DiJavascript1 } from "react-icons/di";
 import {
   AiOutlineSearch,
@@ -52,6 +52,8 @@ const Profile = React.memo(() => {
   const [commentToReplyId, setCommnetToReplyId] = useState("");
   const [followRequestLoader, setFollowRequestLoader] = useState(false);
 
+  const navigate = useNavigate();
+
   useEffect(() => {
     const getUserDetails = async () => {
       try {
@@ -69,6 +71,7 @@ const Profile = React.memo(() => {
           `${baseUrl}/post/userPosts/${userId}`,
           config
         );
+
         // console.log(userResponse.data);
         console.log("Post data", postResponse.data);
         console.log("User data", userResponse.data);
@@ -89,6 +92,16 @@ const Profile = React.memo(() => {
         }
       } catch (error) {
         console.error("Eroor while fetchin user Details", error);
+        toast.error("Something went wrong, Try again later", {
+          position: toast.POSITION.TOP_CENTER,
+          autoClose: 3000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
       }
     };
 
@@ -633,6 +646,11 @@ const Profile = React.memo(() => {
                     src={post.image}
                     alt="userPostImage"
                     className="h-full w-full object-cover"
+                    onClick={() =>
+                      navigate("/profilePost", {
+                        state: { postId: post._id, userId: post.userId },
+                      })
+                    }
                   />
                 </div>
               </>
