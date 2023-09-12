@@ -506,182 +506,230 @@ export const ProfilePost = () => {
 
   return (
     <>
-      <div className="">
-        {isLoading ? (
-          <>
-            <div className="">
-              <Spinners />
+      {isLoading ? (
+        <>
+          <div className="centerPostModal">
+            <Spinners />
+          </div>
+        </>
+      ) : (
+        <>
+          <div className="h-auto min-h-[900px] w-[100vw] bg-[black] flex flex-col justify-center">
+            <div
+              className="h-[55px] w-full text-white flex centerDiv font-semibold border-b-2 border-b-gray-700"
+              onClick={() =>
+                navigate("/profile", { state: postDetails.userId })
+              }
+            >
+              <span className="h-full w-[10%] centerDiv ml-2">
+                <BsChevronLeft className="text-[1.5rem]" />
+              </span>
+              <span className=" h-full w-[90%] pl-[32%] flex items-center">
+                Posts
+              </span>
             </div>
-          </>
-        ) : (
-          <>
-            <div className="h-auto w-[100vw] bg-[#0f0f0f] flex flex-col">
-              <div
-                className="h-[55px] w-full text-white flex items-center font-semibold"
-                onClick={() =>
-                  navigate("/profile", { state: postDetails.userId })
-                }
-              >
-                <span className="h-full w-[10%] centerDiv ml-2">
-                  <BsChevronLeft className="text-[1.5rem]" />
-                </span>
-                <span className=" h-full w-[90%] pl-[32%] flex items-center">
-                  Posts
-                </span>
-              </div>
-              <div className="h-[70px] w-full border-2 flex">
-                <div className="h-full w-[18%] border-2 ml-[2%] centerDiv">
-                  <img
-                    src={postOwnderDetails.profilePicture}
-                    alt="postImage"
-                    className="h-[40px] w-[40px] rounded-[50%] object-cover"
-                  />
-                </div>
-                <div className="h-full w-[65%] border-2 text-white flex items-center pl-1">
-                  {postOwnderDetails.userName}
-                </div>
-                <div className="h-full w-[15%] border-2 centerDiv gap-1">
-                  <span className="h-[4px] w-[4px] bg-white rounded-[50%]"></span>
-                  <span className="h-[4px] w-[4px] bg-white rounded-[50%]"></span>
-                  <span className="h-[4px] w-[4px] bg-white rounded-[50%]"></span>
-                </div>
-              </div>
-              <div className="h-auto w-full border-2">
+            <div className="h-[70px] w-full flex">
+              <div className="h-full w-[18%] ml-[2%] centerDiv">
                 <img
-                  src={postDetails.image}
+                  src={postOwnderDetails.profilePicture}
                   alt="postImage"
-                  className="h-full w-full object-cover"
+                  className="h-[40px] w-[40px] rounded-[50%] object-cover"
                 />
               </div>
-              <div className="h-[6%] min-h-[55px] w-full flex gap-1 border-t-[1px] items-center">
-                <span className="h-full w-[80%] flex items-center text-white pl-2">
-                  {postLikedBefore ? (
-                    <>
-                      <FcLike
-                        className="text-[1.5rem]"
-                        onClick={() =>
-                          handleLikeUpdate(postDetails._id, loggedInUserId)
-                        }
-                      />
-                    </>
-                  ) : (
-                    <>
-                      <AiOutlineHeart
-                        className="text-[1.5rem]"
-                        onClick={() =>
-                          handleLikeUpdate(postDetails._id, loggedInUserId)
-                        }
-                      />
-                    </>
-                  )}
-                  {postLikeCount === 0 ? (
-                    <>
-                      {" "}
-                      &nbsp;&nbsp;
-                      <span className="text-[0.8rem] opacity-50">
-                        Be the first person to like this post
-                      </span>
-                    </>
-                  ) : (
-                    <>
-                      &nbsp;
-                      {postLikeCount} &nbsp;{" "}
-                      <span className="text-[0.8rem] opacity-70">
-                        people liked this post
-                      </span>
-                    </>
-                  )}
-                </span>
-                <span className="h-full w-[20%] centerDiv">
-                  {bookmarkLoader ? (
-                    <>
-                      <span className="h-full w-full centerDiv">
-                        <CirculareSpinner />
-                      </span>
-                    </>
-                  ) : (
-                    <>
-                      {bookmarkStatus ? (
-                        <>
-                          <span
-                            className="h-full w-full centerDiv"
-                            onClick={() =>
-                              updateBookmarkStatus(
-                                true,
-                                postDetails._id,
-                                loggedInUserId
-                              )
-                            }
-                          >
-                            <FcBookmark className="text-[1.5rem]" />
-                          </span>
-                        </>
-                      ) : (
-                        <>
-                          <img
-                            src="https://www.linkpicture.com/q/bg-removebg-preview.jpg"
-                            alt="bookmarkImage"
-                            className="h-[35px] w-[35px] object-cover rounded-[50%]"
-                            onClick={() =>
-                              updateBookmarkStatus(
-                                false,
-                                postDetails._id,
-                                loggedInUserId
-                              )
-                            }
-                          />
-                        </>
-                      )}
-                    </>
-                  )}
-                </span>
+              <div className="h-full w-[65%]  text-white flex items-center pl-1">
+                {postOwnderDetails.userName}
               </div>
-              <div className="h-[400px] w-full text-[#f5f5f5] flex items-center pl-1 overflow-y-scroll flex-col">
-                <div className="h-auto w-full flex">
-                  <span className="h-[30px] w-[30px] flex justify-center mt-2">
-                    <img
-                      src={postOwnderDetails.profilePicture}
-                      alt=""
-                      className="h-full w-full object-cover rounded-[50%]"
-                    />
-                  </span>
-                  <span className="h-auto w-[90%] text-[0.9rem] ml-2 p-1">
-                    <span className="font-semibold">
-                      {" "}
-                      {postOwnderDetails.userName}
-                    </span>
-                    &nbsp;
-                    {postDetails.desc}
-                  </span>
-                </div>
-                {postComments.length > 0 ? (
+              <div className="h-full w-[15%] centerDiv gap-1">
+                <span className="h-[4px] w-[4px] bg-white rounded-[50%]"></span>
+                <span className="h-[4px] w-[4px] bg-white rounded-[50%]"></span>
+                <span className="h-[4px] w-[4px] bg-white rounded-[50%]"></span>
+              </div>
+            </div>
+            <div className="h-auto w-full">
+              <img
+                src={postDetails.image}
+                alt="postImage"
+                className="h-full w-full object-cover"
+              />
+            </div>
+            <div className="h-[6%] min-h-[55px] bg-black w-full flex gap-1 border-t-[1px] items-center">
+              <span className="h-full w-[80%] flex items-center text-white pl-2">
+                {postLikedBefore ? (
                   <>
-                    {postComments.map((comment) => (
-                      <>
-                        <Comment
-                          parentId={parentId}
-                          comment={comment}
-                          key={comment._id}
-                          userReplyingStatus={userWantToReply}
-                          deleteComment={deleteComment}
-                          editComment={editComment}
-                        />
-                      </>
-                    ))}
+                    <FcLike
+                      className="text-[1.5rem]"
+                      onClick={() =>
+                        handleLikeUpdate(postDetails._id, loggedInUserId)
+                      }
+                    />
                   </>
                 ) : (
                   <>
-                    <div className="h-full w-full centerDiv text-[1rem] text-[#f5f5f5] opacity-50 border-2">
-                      Be the first person to add comment !!
-                    </div>
+                    <AiOutlineHeart
+                      className="text-[1.5rem]"
+                      onClick={() =>
+                        handleLikeUpdate(postDetails._id, loggedInUserId)
+                      }
+                    />
                   </>
                 )}
-              </div>
+                {postLikeCount === 0 ? (
+                  <>
+                    {" "}
+                    &nbsp;&nbsp;
+                    <span className="text-[0.8rem] opacity-50">
+                      Be the first person to like this post
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    &nbsp;
+                    {postLikeCount} &nbsp;{" "}
+                    <span className="text-[0.8rem] opacity-70">
+                      people liked this post
+                    </span>
+                  </>
+                )}
+              </span>
+              <span className="h-full w-[20%] centerDiv">
+                {bookmarkLoader ? (
+                  <>
+                    <span className="h-full w-full centerDiv">
+                      <CirculareSpinner />
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    {bookmarkStatus ? (
+                      <>
+                        <span
+                          className="h-full w-full centerDiv"
+                          onClick={() =>
+                            updateBookmarkStatus(
+                              true,
+                              postDetails._id,
+                              loggedInUserId
+                            )
+                          }
+                        >
+                          <FcBookmark className="text-[1.5rem]" />
+                        </span>
+                      </>
+                    ) : (
+                      <>
+                        <img
+                          src="https://www.linkpicture.com/q/bg-removebg-preview.jpg"
+                          alt="bookmarkImage"
+                          className="h-[35px] w-[35px] object-cover rounded-[50%]"
+                          onClick={() =>
+                            updateBookmarkStatus(
+                              false,
+                              postDetails._id,
+                              loggedInUserId
+                            )
+                          }
+                        />
+                      </>
+                    )}
+                  </>
+                )}
+              </span>
             </div>
-            <ToastContainer />
-          </>
-        )}
-      </div>
+            <div className="h-[400px] w-[101vw] bg-[black] text-[#f5f5f5] flex items-center pl-2 overflow-y-scroll flex-col">
+              <div className="h-auto w-full flex bg-[black]">
+                <span className="h-[30px] w-[30px] flex justify-center mt-2">
+                  <img
+                    src={postOwnderDetails.profilePicture}
+                    alt="commenterProfilePhoto"
+                    className="h-full w-full object-cover rounded-[50%]"
+                  />
+                </span>
+                <span className="h-auto w-[90%] text-[0.9rem] ml-2 p-1">
+                  <span className="font-semibold">
+                    {" "}
+                    {postOwnderDetails.userName}
+                  </span>
+                  &nbsp;
+                  {postDetails.desc}
+                </span>
+              </div>
+              {postComments.length > 0 ? (
+                <>
+                  {postComments.map((comment) => (
+                    <>
+                      <Comment
+                        parentId={parentId}
+                        comment={comment}
+                        key={comment._id}
+                        userReplyingStatus={userWantToReply}
+                        deleteComment={deleteComment}
+                        editComment={editComment}
+                      />
+                    </>
+                  ))}
+                </>
+              ) : (
+                <>
+                  <div className="h-full w-full bg-black centerDiv text-[1rem] text-[#f5f5f5] opacity-50">
+                    Be the first person to add comment !!
+                  </div>
+                </>
+              )}
+            </div>
+            <div className="h-[20%] min-h-[55px] w-full text-[#f5f5f5] flex items-center border-t-[1px] ">
+              {isUserReplying ? (
+                <>
+                  <div className="h-[100%] w-full flex flex-col bg-black">
+                    <span className="h-[40%] w-full pl-1 flex items-center text-[0.8rem]">
+                      <span className="h-full w-[80%] opacity-60 bg-black">
+                        Replying to @{replyingTo}
+                      </span>
+                      <span
+                        className="h-full w-[20%] pr-2 centerDiv"
+                        onClick={() => setIsUserReplying(!isUserReplying)}
+                      >
+                        <AiFillCloseCircle className="text-[1.1rem]" />
+                      </span>
+                    </span>
+                    <div className="h-[70%] w-full flex items-center overflow-hidden">
+                      <textarea
+                        className="h-[100%] w-[82%] text-[0.9rem] bg-black resize-none min-w-[290px] placeHolderCss outline-none border-none"
+                        value={userComment}
+                        onChange={(event) => setUserComment(event.target.value)}
+                        placeholder="Add your Reply here..."
+                      />
+                      <span
+                        className="h-[100%] text-[0.9rem] w-[15%] opacity-90 centerDiv"
+                        onClick={() => handleReplyComment(commentToReplyId)}
+                      >
+                        post
+                      </span>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="h-auto w-full flex justify-between bg-black">
+                    <textarea
+                      className="h-auto w-[85%] text-[0.9rem] bg-black min-h-[75px] min-w-[270px] pt-4 pl-1 resize-none placeHolderCss border-none outline-none"
+                      value={userComment}
+                      onChange={(event) => setUserComment(event.target.value)}
+                      placeholder="Add your comment here..."
+                    />
+                    <span
+                      className="h-auto text-[0.9rem] w-[15%] opacity-90 centerDiv bg-black"
+                      onClick={() => handlePostComment(postDetails._id)}
+                    >
+                      post
+                    </span>
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+          <ToastContainer />
+        </>
+      )}
     </>
   );
 };

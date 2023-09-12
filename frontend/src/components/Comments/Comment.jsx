@@ -163,19 +163,6 @@ export const Comment = React.memo(
             return reply;
           });
           setReplies(storeReplies);
-          const updatedText = text;
-          // setReplies((prevReply) => {
-          //     return prevReply.map((reply) => {
-          //         if(reply === commentId){
-          //             return {
-          //                 ...reply,
-          //                 text : updatedText
-          //             }
-          //         }
-          //         return reply;
-          //     });
-          // });
-
           setEditCommentModal(false);
           setShowCommentMenu(false);
           setUserComment("");
@@ -230,7 +217,6 @@ export const Comment = React.memo(
                   &nbsp; {comment.text}
                 </span>
                 <span className="text-[0.7rem] mt-1">
-                  {comment.like.length}&nbsp;likes&nbsp;
                   <span
                     className="ml-1 mr-1 cursor-pointer"
                     onClick={() =>

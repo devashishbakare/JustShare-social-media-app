@@ -51,6 +51,7 @@ const Profile = React.memo(() => {
   const [replyingTo, setReplyingTo] = useState("");
   const [commentToReplyId, setCommnetToReplyId] = useState("");
   const [followRequestLoader, setFollowRequestLoader] = useState(false);
+  const [showBookmark, setShowBookmark] = useState(false);
 
   const navigate = useNavigate();
 
@@ -618,7 +619,7 @@ const Profile = React.memo(() => {
               Lorem ipsum dolor sit amet consectetur, adipisicing elit.
               Laboriosam, id.
             </div>
-            <div className="h-[5vh] min-h-[45px] w-full border-2 border-red-500 centerDiv">
+            <div className="h-[5vh] min-h-[45px] w-full centerDiv">
               <span className="h-full w-[33%] centerDiv">
                 {userPosts.length}&nbsp;posts
               </span>
@@ -630,10 +631,24 @@ const Profile = React.memo(() => {
               </span>
             </div>
             <div className="h-[7vh] min-h-[63px] w-full flex gap-1 border-2 centerDiv">
-              <span className=" h-full w-[50%] centerDiv">
+              <span
+                className={
+                  showBookmark
+                    ? "h-full w-[50%] centerDiv"
+                    : "h-full w-[50%] centerDiv selectedShadow"
+                }
+                onClick={() => setShowBookmark(!showBookmark)}
+              >
                 <FcGrid className="text-[2rem]" />
               </span>
-              <span className="h-full w-[50%] centerDiv">
+              <span
+                className={
+                  showBookmark
+                    ? "h-full w-[50%] centerDiv selectedShadow"
+                    : "h-full w-[50%] centerDiv"
+                }
+                onClick={() => setShowBookmark(!showBookmark)}
+              >
                 <FaBookmark className="text-[1.6rem]" />
               </span>
             </div>
