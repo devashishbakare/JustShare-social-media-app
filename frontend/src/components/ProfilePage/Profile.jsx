@@ -52,7 +52,7 @@ const Profile = React.memo(() => {
   const [commentToReplyId, setCommnetToReplyId] = useState("");
   const [followRequestLoader, setFollowRequestLoader] = useState(false);
   const [showBookmark, setShowBookmark] = useState(false);
-
+  const [fetchPostLoader, setFetchPostLoader] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -157,7 +157,7 @@ const Profile = React.memo(() => {
         }
       }
     },
-    []
+    [postComments]
   );
 
   const handleFollowRequest = async () => {
@@ -562,6 +562,61 @@ const Profile = React.memo(() => {
     }
   };
 
+  const handleShowBookmark = async () => {
+    //userId
+    try {
+      setFetchPostLoader(true);
+
+      const userBookmarkPostResponse = await axios.get(
+        `${baseUrl}/user/bookmarkPosts/${userId}`
+      );
+
+      if (userBookmarkPostResponse.status === 200) {
+        setUserPosts(userBookmarkPostResponse.data.allBookmarkPost);
+        setShowBookmark(true);
+      }
+    } catch (error) {
+      toast.error("Edit Comment Failed, try again later", {
+        position: toast.POSITION.TOP_CENTER,
+        autoClose: 3000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
+    } finally {
+      setFetchPostLoader(false);
+    }
+  };
+
+  const handleShowProfilePost = async () => {
+    try {
+      setFetchPostLoader(true);
+      const postResponse = await axios.get(
+        `${baseUrl}/post/userPosts/${userId}`
+      );
+      if (postResponse.status === 200) {
+        setUserPosts(postResponse.data);
+        setShowBookmark(false);
+      }
+    } catch (error) {
+      toast.error("Edit Comment Failed, try again later", {
+        position: toast.POSITION.TOP_CENTER,
+        autoClose: 3000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
+    } finally {
+      setFetchPostLoader(false);
+    }
+  };
+
   return (
     <>
       {isLoading ? (
@@ -630,46 +685,76 @@ const Profile = React.memo(() => {
                 {followingsCount}&nbsp;following
               </span>
             </div>
-            <div className="h-[7vh] min-h-[63px] w-full flex gap-1 border-2 centerDiv">
-              <span
-                className={
-                  showBookmark
-                    ? "h-full w-[50%] centerDiv"
-                    : "h-full w-[50%] centerDiv selectedShadow"
-                }
-                onClick={() => setShowBookmark(!showBookmark)}
-              >
-                <FcGrid className="text-[2rem]" />
-              </span>
-              <span
-                className={
-                  showBookmark
-                    ? "h-full w-[50%] centerDiv selectedShadow"
-                    : "h-full w-[50%] centerDiv"
-                }
-                onClick={() => setShowBookmark(!showBookmark)}
-              >
-                <FaBookmark className="text-[1.6rem]" />
-              </span>
-            </div>
-          </div>
-          <div className="h-auto w-[100vw] border-2 flex flex-wrap gap-1 centerDiv md:hidden">
-            {userPosts.map((post) => (
+            {userId === loggedInUserId && (
               <>
-                <div className="h-[15vh] w-[32%] cursor-pointer" key={post._id}>
-                  <img
-                    src={post.image}
-                    alt="userPostImage"
-                    className="h-full w-full object-cover"
-                    onClick={() =>
-                      navigate("/profilePost", {
-                        state: { postId: post._id, userId: post.userId },
-                      })
+                <div className="h-[7vh] min-h-[63px] w-full flex gap-1 border-2 centerDiv">
+                  <span
+                    className={
+                      showBookmark
+                        ? "h-full w-[50%] centerDiv"
+                        : "h-full w-[50%] centerDiv selectedShadow"
                     }
-                  />
+                    onClick={handleShowProfilePost}
+                  >
+                    <FcGrid className="text-[2rem]" />
+                  </span>
+                  <span
+                    className={
+                      showBookmark
+                        ? "h-full w-[50%] centerDiv selectedShadow"
+                        : "h-full w-[50%] centerDiv"
+                    }
+                    onClick={handleShowBookmark}
+                  >
+                    <FaBookmark className="text-[1.6rem]" />
+                  </span>
                 </div>
               </>
-            ))}
+            )}
+          </div>
+          <div className="h-auto w-[100vw] flex flex-wrap gap-1 self-start p-1 bg-white md:hidden">
+            {fetchPostLoader ? (
+              <>
+                <div className="h-full w-full centerDiv">
+                  <CirculareSpinner />
+                </div>
+              </>
+            ) : (
+              <>
+                {userPosts.length > 0 ? (
+                  <>
+                    {userPosts.map((post) => (
+                      <>
+                        <div
+                          className="h-[15vh] w-[32%] cursor-pointer"
+                          key={post._id}
+                        >
+                          <img
+                            src={post.image}
+                            alt="userPostImage"
+                            className="h-full w-full object-cover"
+                            onClick={() =>
+                              navigate("/profilePost", {
+                                state: {
+                                  postId: post._id,
+                                  userId: post.userId,
+                                },
+                              })
+                            }
+                          />
+                        </div>
+                      </>
+                    ))}
+                  </>
+                ) : (
+                  <>
+                    <div className="text-[1rem] opacity-50 text-gray-500 mt-[50%] ml-[40%]">
+                      No post yet
+                    </div>
+                  </>
+                )}
+              </>
+            )}
           </div>
           <div className="hidden md:flex h-[100vh] w-[10vw] border-2 flex-col gap-[50px] items-center pt-7">
             <DiJavascript1 className="text-[2rem] cursor-pointer" />
