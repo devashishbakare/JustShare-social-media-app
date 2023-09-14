@@ -54,7 +54,11 @@ const Navbar = React.memo(() => {
                 <span
                   key={user._id}
                   className={style.seachResultValue}
-                  onClick={() => navigate("/profile", { state: user._id })}
+                  onClick={() =>
+                    navigate("/profile", {
+                      state: { userId: user._id, page: "profile" },
+                    })
+                  }
                 >
                   {user.userName}
                 </span>

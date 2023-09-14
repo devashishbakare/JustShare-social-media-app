@@ -23,6 +23,8 @@ export const ProfilePost = () => {
   const location = useLocation();
   const postId = location.state.postId;
   const userId = location.state.userId;
+  const previousPage = location.state.page;
+  const prevPageProfileId = location.state.prevPageProfileId;
   console.log("postId " + postId);
   const user = localStorage.getItem("user");
   const loggedInUserId = JSON.parse(user)._id;
@@ -518,7 +520,9 @@ export const ProfilePost = () => {
             <div
               className="h-[55px] w-full text-white flex centerDiv font-semibold border-b-2 border-b-gray-700"
               onClick={() =>
-                navigate("/profile", { state: postDetails.userId })
+                navigate("/profile", {
+                  state: { userId: prevPageProfileId, page: previousPage },
+                })
               }
             >
               <span className="h-full w-[10%] centerDiv ml-2">

@@ -135,7 +135,11 @@ const Aside = () => {
             />
             <span
               className={style.asideMenuText}
-              onClick={() => navigate("/profile", { state: userId })}
+              onClick={() =>
+                navigate("/profile", {
+                  state: { userId: userId, page: "profile" },
+                })
+              }
               // navigate('/create', { state: { duplicateLifecycle } })
             >
               Profile

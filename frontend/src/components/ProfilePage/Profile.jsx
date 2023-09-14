@@ -22,9 +22,14 @@ import { Comment } from "../Comments/Comment";
 const Profile = React.memo(() => {
   //visiters userId details
   const location = useLocation();
-  const userId = location.state;
+  const userId = location.state.userId;
   console.log("profileUser " + userId);
-
+  const currPage = location.state.page;
+  console.log(currPage + " Page we are in");
+  // status of curr page we are int
+  const [currPageStatus, setCurrPageStatus] = useState(
+    currPage === "profile" ? "profile" : "bookmark"
+  );
   //loggedIn userId details
   const storedUserDetails = localStorage.getItem("user");
   const user = JSON.parse(storedUserDetails);
@@ -53,6 +58,7 @@ const Profile = React.memo(() => {
   const [followRequestLoader, setFollowRequestLoader] = useState(false);
   const [showBookmark, setShowBookmark] = useState(false);
   const [fetchPostLoader, setFetchPostLoader] = useState(false);
+  const [bookmarkPosts, setBookmarkPosts] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -73,11 +79,19 @@ const Profile = React.memo(() => {
           config
         );
 
+        const userBookmarkPostResponse = await axios.get(
+          `${baseUrl}/user/bookmarkPosts/${userId}`
+        );
+
         // console.log(userResponse.data);
         console.log("Post data", postResponse.data);
         console.log("User data", userResponse.data);
 
-        if (userResponse.status === 200 && postResponse.status === 200) {
+        if (
+          userResponse.status === 200 &&
+          postResponse.status === 200 &&
+          userBookmarkPostResponse.status === 200
+        ) {
           if (userId !== loggedInUserId) {
             if (userResponse.data.followers.includes(loggedInUserId)) {
               setFollowStatus("Unfollow");
@@ -87,6 +101,7 @@ const Profile = React.memo(() => {
           }
           setUserDetails(userResponse.data);
           setUserPosts(postResponse.data);
+          setBookmarkPosts(userBookmarkPostResponse.data.allBookmarkPost);
           setFollowersCount(userResponse.data.followers.length);
           setFollowingsCount(userResponse.data.followings.length);
           setIsLoading(false);
@@ -562,59 +577,14 @@ const Profile = React.memo(() => {
     }
   };
 
-  const handleShowBookmark = async () => {
-    //userId
-    try {
-      setFetchPostLoader(true);
-
-      const userBookmarkPostResponse = await axios.get(
-        `${baseUrl}/user/bookmarkPosts/${userId}`
-      );
-
-      if (userBookmarkPostResponse.status === 200) {
-        setUserPosts(userBookmarkPostResponse.data.allBookmarkPost);
-        setShowBookmark(true);
-      }
-    } catch (error) {
-      toast.error("Edit Comment Failed, try again later", {
-        position: toast.POSITION.TOP_CENTER,
-        autoClose: 3000,
-        hideProgressBar: true,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "dark",
-      });
-    } finally {
-      setFetchPostLoader(false);
-    }
+  const handleShowBookmark = () => {
+    setCurrPageStatus("bookmark");
+    setShowBookmark(true);
   };
 
-  const handleShowProfilePost = async () => {
-    try {
-      setFetchPostLoader(true);
-      const postResponse = await axios.get(
-        `${baseUrl}/post/userPosts/${userId}`
-      );
-      if (postResponse.status === 200) {
-        setUserPosts(postResponse.data);
-        setShowBookmark(false);
-      }
-    } catch (error) {
-      toast.error("Edit Comment Failed, try again later", {
-        position: toast.POSITION.TOP_CENTER,
-        autoClose: 3000,
-        hideProgressBar: true,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "dark",
-      });
-    } finally {
-      setFetchPostLoader(false);
-    }
+  const handleShowProfilePost = () => {
+    setCurrPageStatus("profile");
+    setShowBookmark(false);
   };
 
   return (
@@ -721,36 +691,79 @@ const Profile = React.memo(() => {
               </>
             ) : (
               <>
-                {userPosts.length > 0 ? (
+                {currPageStatus === "profile" ? (
                   <>
-                    {userPosts.map((post) => (
+                    {userPosts.length > 0 ? (
                       <>
-                        <div
-                          className="h-[15vh] w-[32%] cursor-pointer"
-                          key={post._id}
-                        >
-                          <img
-                            src={post.image}
-                            alt="userPostImage"
-                            className="h-full w-full object-cover"
-                            onClick={() =>
-                              navigate("/profilePost", {
-                                state: {
-                                  postId: post._id,
-                                  userId: post.userId,
-                                },
-                              })
-                            }
-                          />
+                        {userPosts.map((post) => (
+                          <>
+                            <div
+                              className="h-[15vh] w-[32%] cursor-pointer"
+                              key={post._id}
+                            >
+                              <img
+                                src={post.image}
+                                alt="userPostImage"
+                                className="h-full w-full object-cover"
+                                onClick={() =>
+                                  navigate("/profilePost", {
+                                    state: {
+                                      postId: post._id,
+                                      userId: post.userId,
+                                      prevPageProfileId: userId,
+                                      page: "profile",
+                                    },
+                                  })
+                                }
+                              />
+                            </div>
+                          </>
+                        ))}
+                      </>
+                    ) : (
+                      <>
+                        <div className="text-[1rem] opacity-50 text-gray-500 mt-[50%] ml-[40%]">
+                          No post yet
                         </div>
                       </>
-                    ))}
+                    )}
                   </>
                 ) : (
                   <>
-                    <div className="text-[1rem] opacity-50 text-gray-500 mt-[50%] ml-[40%]">
-                      No post yet
-                    </div>
+                    {bookmarkPosts.length > 0 ? (
+                      <>
+                        {bookmarkPosts.map((post) => (
+                          <>
+                            <div
+                              className="h-[15vh] w-[32%] cursor-pointer"
+                              key={post._id}
+                            >
+                              <img
+                                src={post.image}
+                                alt="userPostImage"
+                                className="h-full w-full object-cover"
+                                onClick={() =>
+                                  navigate("/profilePost", {
+                                    state: {
+                                      postId: post._id,
+                                      userId: post.userId,
+                                      prevPageProfileId: userId,
+                                      page: "bookmark",
+                                    },
+                                  })
+                                }
+                              />
+                            </div>
+                          </>
+                        ))}
+                      </>
+                    ) : (
+                      <>
+                        <div className="text-[1rem] opacity-50 text-gray-500 mt-[50%] ml-[40%]">
+                          No post yet
+                        </div>
+                      </>
+                    )}
                   </>
                 )}
               </>
