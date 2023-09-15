@@ -54,6 +54,7 @@ const updatePost = async (req, res) => {
 const deletePost = async (req, res) => {
   let postId = req.params.id;
   try {
+    if (!postId) return res.status(404).json("postId Not Fount");
     let post = await Post.findByIdAndDelete({ _id: postId });
     let userId = post.userId;
     let user = await User.findById(userId);

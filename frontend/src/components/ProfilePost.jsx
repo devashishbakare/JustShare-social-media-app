@@ -45,6 +45,7 @@ export const ProfilePost = () => {
   const [followStatus, setFollowStatus] = useState();
   const [loggedInUserDetails, setLoggedInUserDetails] = useState([]);
   const [bookmarkStatus, setBookmarkStatus] = useState(false);
+  const [postCrudMenu, setPostCrudMenu] = useState(false);
   const parentId = "-1";
   useEffect(() => {
     const fetchPostDetails = async () => {
@@ -506,6 +507,23 @@ export const ProfilePost = () => {
     }
   };
 
+  const handleDeletpost = async () => {
+    try {
+    } catch (error) {
+      console.log(error);
+      toast.error("Edit Comment Failed, try again later", {
+        position: toast.POSITION.TOP_CENTER,
+        autoClose: 3000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
+    }
+  };
+
   return (
     <>
       {isLoading ? (
@@ -543,11 +561,41 @@ export const ProfilePost = () => {
               <div className="h-full w-[65%]  text-white flex items-center pl-1">
                 {postOwnderDetails.userName}
               </div>
-              <div className="h-full w-[15%] centerDiv gap-1">
-                <span className="h-[4px] w-[4px] bg-white rounded-[50%]"></span>
-                <span className="h-[4px] w-[4px] bg-white rounded-[50%]"></span>
-                <span className="h-[4px] w-[4px] bg-white rounded-[50%]"></span>
-              </div>
+              {prevPageProfileId === loggedInUserId && (
+                <>
+                  <div
+                    className="h-full w-[15%] centerDiv gap-1 relative"
+                    onClick={() => setPostCrudMenu(true)}
+                  >
+                    <span className="h-[4px] w-[4px] bg-white rounded-[50%]"></span>
+                    <span className="h-[4px] w-[4px] bg-white rounded-[50%]"></span>
+                    <span className="h-[4px] w-[4px] bg-white rounded-[50%]"></span>
+                  </div>
+                  {postCrudMenu && (
+                    <>
+                      <div className="absolute top-[11%] right-1 h-auto w-auto flex flex-col bg-white">
+                        <span
+                          className="h-[40px] w-[110px] centerDiv"
+                          onClick={handleDeletpost}
+                        >
+                          Delete
+                        </span>
+                        <hr />
+                        <span className="h-[40px] w-[110px] centerDiv">
+                          Edit
+                        </span>
+                        <hr />
+                        <span
+                          className="h-[40px] w-[110px] centerDiv"
+                          onClick={() => setPostCrudMenu(!postCrudMenu)}
+                        >
+                          Close
+                        </span>
+                      </div>
+                    </>
+                  )}
+                </>
+              )}
             </div>
             <div className="h-auto w-full">
               <img

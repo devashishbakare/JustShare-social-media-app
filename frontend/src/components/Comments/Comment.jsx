@@ -199,6 +199,10 @@ export const Comment = React.memo(
       setEditCommentModal(false);
     };
 
+    const handleReplyToComment = (commentId, commenterName) => {
+      userReplyingStatus(true, commentId, commenterName);
+    };
+
     return (
       <>
         {editCommentModal === false && (
@@ -220,11 +224,7 @@ export const Comment = React.memo(
                   <span
                     className="ml-1 mr-1 cursor-pointer"
                     onClick={() =>
-                      userReplyingStatus(
-                        true,
-                        comment._id,
-                        comment.commenterName
-                      )
+                      handleReplyToComment(comment._id, comment.commenterName)
                     }
                   >
                     Reply
@@ -262,7 +262,7 @@ export const Comment = React.memo(
                               >
                                 ---- &nbsp;Hide Replies
                               </span>
-                              <div className="h-auto w-full">
+                              <div className="h-auto w-[100vw]">
                                 {replies.map((reply) => (
                                   <>
                                     <Comment

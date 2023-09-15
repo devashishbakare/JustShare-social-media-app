@@ -14,4 +14,8 @@ router.get("/postComments", commentController.getPostComment);
 router.put("/like", commentController.commentLike);
 router.delete("/deleteAllReply", commentController.deleteAllReply);
 router.post("/removeNull/:id", commentController.removeNull);
+router.delete(
+  "/deleteNestedCommnet/:id",
+  commentController.deleteNestedComments
+);
 module.exports = router;

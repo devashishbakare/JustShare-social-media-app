@@ -343,6 +343,79 @@ const updateCommentReply = async (req, res) => {
   }
 };
 
+const deleteNestedComments = async (req, res) => {
+  const postId = req.params.id;
+  try {
+    const post = await Post.findById(postId);
+
+    if (!post) return res.status(404).json("post not found");
+
+    const comments = post.comment;
+
+    // Use Promise.all to parallelize the removal of comments
+    const results = await Promise.all(
+      comments.map((commentId) => removeComment(commentId))
+    );
+
+    if (results.some((result) => result === false)) {
+      return res
+        .status(500)
+        .json("something went wrong in deleting some comments");
+    }
+
+    await post.updateOne({
+      $set: { comment: [] },
+    });
+
+    return res.status(200).json("comments have been deleted");
+  } catch (error) {
+    return res.status(500).json("something went wrong during comment deletion");
+  }
+};
+
+const removeComment = async (commentId) => {
+  const comment = await Comment.findById(commentId);
+
+  if (!comment) return false;
+
+  const replies = comment.reply;
+
+  // Use Promise.all to parallelize the removal of replies
+  const results = await Promise.all(
+    replies.map((replyId) => removeReply(replyId))
+  );
+
+  if (results.some((result) => result === false)) {
+    return false;
+  }
+
+  await Comment.findByIdAndDelete(commentId);
+  return true;
+};
+
+const removeReply = async (replyId) => {
+  const parentReply = await Comment.findById(replyId);
+
+  if (!parentReply) return false;
+
+  if (parentReply.reply.length === 0) {
+    await Comment.findByIdAndDelete(replyId);
+    return true;
+  } else {
+    // Use Promise.all to parallelize the removal of nested replies
+    const results = await Promise.all(
+      parentReply.reply.map((singleReply) => removeReply(singleReply))
+    );
+
+    if (results.some((result) => result === false)) {
+      return false;
+    }
+  }
+
+  await Comment.findByIdAndDelete(replyId);
+  return true;
+};
+
 module.exports = {
   createComment,
   updateComment,
@@ -357,4 +430,5 @@ module.exports = {
   removeNull,
   getCommentDetails,
   updateCommentReply,
+  deleteNestedComments,
 };
